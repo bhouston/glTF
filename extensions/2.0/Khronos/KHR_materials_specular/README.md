@@ -3,6 +3,7 @@
 ## Khronos 3D Formats Working Group
 
 * Norbert Nopper, UX3D [@UX3DGpuSoftware](https://twitter.com/UX3DGpuSoftware)
+* Ben Houston, [Threekit](https://threekit.com) [@BenHouston3D](https://twitter.com/BenHouston3D)
 
 ## Acknowledgments
 
@@ -44,10 +45,17 @@ All implementations should use the same calculations for the BRDF inputs. Implem
 
 |                     | Type                                                                | Description            | Required             |
 |---------------------|---------------------------------------------------------------------|------------------------|----------------------|
-|**specularFactor**   | `number`                                                            | The specular.          | No, default: `0.5`   |
-|**specularTexture**  | [`textureInfo`](/specification/2.0/README.md#reference-textureInfo) | The specular  texture. | No                   |
+|**specularFactor**   | `number`                                                            | The specular strength.          | No, default: `1.0`   |
+|**specularFactorTexture**  | [`textureInfo`](/specification/2.0/README.md#reference-textureInfo) | The specular strength modulation texture. | No                   |
+|**specularIOR**   | `number`                                                            | The specular ior.          | No, default: `1.5`   |
+|**specularIORTexture**  | [`textureInfo`](/specification/2.0/README.md#reference-textureInfo) | The specular ior modulation texture. | No                   |
+|**specularColor**   | `color`                                                            | The specular reflection color.          | No, default: `1, 1, 1`   |
+|**specularColorTexture**  | [`textureInfo`](/specification/2.0/README.md#reference-textureInfo) | The specular reflection color modulation texture. | No                   |
 
-This extension is overwriting the default `F0 = 0.04` for non-metallic materials in the Metallic-Roughness workflow. Instead, `F0 = 0.08 * specularFactor * specularTexture` is used.
+The method of calculating specular reflection is based on the method outlined in Autodesk Standard Surface and also Dassault Enterprise PBR:
+```
+specularReflectance = specularFactor * specularColor * specular_BRDF( specularIOR )
+```
 
 ## Appendix
 
@@ -62,3 +70,5 @@ TODO
 [Physically-Based Shading at Disney](https://disney-animation.s3.amazonaws.com/library/s2012_pbs_disney_brdf_notes_v2.pdf)  
 [THE PBR GUIDE BY ALLEGORITHMIC - PART 1](https://academy.substance3d.com/courses/the-pbr-guide-part-1)  
 [THE PBR GUIDE BY ALLEGORITHMIC - PART 2](https://academy.substance3d.com/courses/the-pbr-guide-part-2)  
+[Autodesk Standard Surface](https://autodesk.github.io/standard-surface/)
+[Dassault Entperprise PBR](https://dassaultsystemes-technology.github.io/EnterprisePBRShadingModel/spec-2021x.md.html)
