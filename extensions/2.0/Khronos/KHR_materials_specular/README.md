@@ -47,15 +47,15 @@ All implementations should use the same calculations for the BRDF inputs. Implem
 |---------------------|---------------------------------------------------------------------|------------------------|----------------------|
 |**specularFactor**   | `number`                                                            | The specular strength.          | No, default: `1.0`   |
 |**specularFactorTexture**  | [`textureInfo`](/specification/2.0/README.md#reference-textureInfo) | The specular strength modulation texture. | No                   |
-|**specularIOR**   | `number`                                                            | The specular ior.          | No, default: `1.5`   |
-|**specularIORTexture**  | [`textureInfo`](/specification/2.0/README.md#reference-textureInfo) | The specular ior modulation texture. | No                   |
 |**specularColor**   | `color`                                                            | The specular reflection color.          | No, default: `1, 1, 1`   |
 |**specularColorTexture**  | [`textureInfo`](/specification/2.0/README.md#reference-textureInfo) | The specular reflection color modulation texture. | No                   |
 
 The method of calculating specular reflection is based on the method outlined in Autodesk Standard Surface and also Dassault Enterprise PBR:
 ```
-specularReflectance = specularFactor * specularColor * specular_BRDF( specularIOR )
+specularReflectance = specularFactor * specularColor * specular_BRDF( ior )
 ```
+
+This uses the ior as defined in the KHR_materials_ior extension.
 
 ## Appendix
 
