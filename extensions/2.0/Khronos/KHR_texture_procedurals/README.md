@@ -67,6 +67,21 @@ Standard material factors and textures are the fallback. Textures are optional; 
 
 Bindings are declared on `materials[i].extensions.KHR_texture_procedurals.bindings`. Each property in this nonempty object names one channel. Its value contains a nonnegative `index` into the root `procedurals` array and an `output` naming a graph output. `output` is always required, including single-output graphs. A graph MAY drive several channels and several materials. A material MAY use several graphs. There is no restriction to one graph per material.
 
+```mermaid
+flowchart LR
+  A[MaterialX pattern nodes] --> G[Named graph outputs]
+  G --> M[metallic: float]
+  G --> R[roughness: float]
+  G --> C[baseColor: color3]
+  M --> V[Final material channels]
+  R --> V
+  C --> V
+  V --> P[Existing glTF material BRDF]
+  F[Standard factors and textures] -. unsupported optional material .-> V
+```
+
+This diagram is informative. Procedural and complete fallback channel sets are selected according to the per-material policy; the dotted path does not add fallback multipliers to bound procedural values.
+
 | Binding | Required output type | Value supplied to the material |
 | --- | --- | --- |
 | `baseColor` | `color3` | Linear Rec.709 RGB, clamped to [0, 1] |
@@ -124,7 +139,7 @@ The root extension contains a nonempty `procedurals` array and MAY contain `proc
 
 Each root graph-interface input has `nodetype: "input"`, a port `type`, and exactly one of a typed `value` or, for `filename`, a `texture` index. An interface input cannot connect to an internal node or another interface input. Each processing node has a library `nodetype`, a result `type`, an optional input map, and a nonempty output map. All output names and types of the selected node definition **MUST** be declared; they cannot be renamed. Missing ordinary input overrides use library definition defaults. A required input without a default **MUST** be supplied. Implicit geometric defaults **MUST** be expanded into explicit geometric nodes and connections before export.
 
-Every node input has `nodetype: "input"`, a type, and exactly one source. The selected library definition's `uniform` constraints **MUST** be preserved: a uniform port cannot be driven by a value that varies over a primitive's surface. Root interface values are uniform (including animated values at a given time); constants and operations on uniform inputs remain uniform. Geometric streams and spatial image/noise evaluations are varying. Implementations **MUST** validate uniform requirements through graph and custom-definition connections, including mode and stream-index inputs, rather than infer uniformity from a matching type alone.
+Every node input has `nodetype: "input"`, a type, and exactly one source. The selected library definition's `uniform` constraints **MUST** be preserved: a uniform port cannot be driven by a value that varies over a primitive's surface. Root interface values are uniform (including animated values at a given time); constants and pure deterministic operations on uniform inputs remain uniform. For a portable, conservative classification this profile treats all geometric nodes and image/tiledimage/triplanarprojection evaluations as varying, even if an image currently samples constant coordinates. Such a result cannot feed a uniform port; authors precompute it into an interface value when necessary. Pure noise operations with uniform coordinates remain uniform. Implementations **MUST** validate uniform requirements through graph and custom-definition connections, including mode and stream-index inputs, rather than infer uniformity from a matching type alone.
 
 | Source properties | Meaning |
 | --- | --- |
@@ -162,9 +177,9 @@ Image nodes own sampling behavior through their MaterialX inputs/defaults. For p
 
 For `image`/equivalent resource nodes returning `color3` or `color4`, image RGB is treated as sRGB and decoded to linear Rec.709 before graph arithmetic; alpha remains linear. For scalar/vector image outputs, the resource is linear data without sRGB decoding. Graph authors **MUST** select the overload that matches the resource's role. Reusing one image as color and data requires distinct evaluations with the appropriate interpretation. This restriction is the glTF interoperability profile, rather than support for arbitrary MaterialX color spaces. Color-transform nodes that require another color space are outside this profile.
 
-Geometry nodes with a numbered stream index bind to the corresponding glTF attribute: `texcoord` index n to `TEXCOORD_n`, and `geomcolor` index n to `COLOR_n`. Indices **MUST** be nonnegative uniform integers and need not be sequential. Only the `texcoord` vector2 overload is supported; VEC3 texture-coordinate streams are not introduced here. `geomcolor` color3/color4/vector3/vector4 overloads select the corresponding RGB or RGBA values; the scalar overload is excluded. COLOR_0/COLOR_n RGB is linear and absent alpha means one. A requested missing stream is a semantic error on every affected primitive.
+Geometry nodes with a numbered stream index bind to the corresponding glTF attribute: `texcoord` index n to `TEXCOORD_n`, and `geomcolor` index n to `COLOR_n`. Indices **MUST** be nonnegative uniform integers and need not be sequential. Only the `texcoord` vector2 overload is supported; VEC3 texture-coordinate streams are not introduced here. `geomcolor` color3/color4 overloads select the corresponding RGB or RGBA values; the scalar overload is excluded. To obtain vectors, use an explicit color-to-vector conversion node. COLOR_0/COLOR_n RGB is linear and absent alpha means one. A requested missing stream is a semantic error on every affected primitive.
 
-Geometry nodes read the interpolated geometry after morphing and skinning, before procedural shading-normal perturbation. In particular the geometric `normal` node does not read this material's bound procedural normal, avoiding an implicit evaluation cycle. `position`, `normal`, `tangent`, and `bitangent` support only `object` and `world` spaces; position units are metres. World-space inputs include the current instance transform. Normals use inverse-transpose transformation and normalization. Tangents and bitangents use glTF's tangent handedness. `tangent`/`bitangent` index **MUST** be zero because glTF defines only one TANGENT stream. When a tangent-frame node or `normalmap` needs a frame and no TANGENT stream is present, the implementation **MUST** generate the frame with MikkTSpace using TEXCOORD_0, or diagnose unsupported evaluation and apply the required/optional policy. Missing TEXCOORD_0 in that case is invalid; converters may instead provide an explicit TANGENT stream. Implementations **MUST** evaluate shared graphs in the current primitive/instance context rather than cache geometry-dependent results globally.
+Geometry nodes read the interpolated geometry after morphing and skinning, before procedural shading-normal perturbation. In particular the geometric `normal` node does not read this material's bound procedural normal, avoiding an implicit evaluation cycle. `position`, `normal`, `tangent`, and `bitangent` support only `object` and `world` spaces; position units are metres. World-space inputs include the current instance transform. Normals use inverse-transpose transformation and normalization. If NORMAL is absent, triangle primitives use the flat normals required by core glTF; supplied tangents must then be ignored as in core glTF. Tangents and bitangents use glTF's tangent handedness. `tangent`/`bitangent` index **MUST** be zero because glTF defines only one TANGENT stream. When an explicit geometric tangent/bitangent node needs a frame and no usable TANGENT stream is present, the implementation **MUST** generate the frame with MikkTSpace using TEXCOORD_0, or diagnose unsupported evaluation and apply the required/optional policy. Missing TEXCOORD_0 in that case is invalid; converters may instead provide NORMAL and TANGENT streams. A `normalmap` with explicitly supplied literal/frame-vector inputs does not imply an additional stream lookup. Missing normals on nontriangle topology cannot be generated by this rule and require a supplied normal or a diagnosed unsupported evaluation. Implementations **MUST** evaluate shared graphs in the current primitive/instance context rather than cache geometry-dependent results globally.
 
 Name-based arbitrary geometric properties are outside the profile. The MaterialX companion specifies permitted geometry nodes and supported coordinate spaces.
 
