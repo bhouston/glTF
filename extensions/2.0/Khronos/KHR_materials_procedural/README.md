@@ -112,7 +112,7 @@ The extension object is permitted only on the root glTF object and materials.
 
 ### Interactions with other material extensions
 
-The following binding points are available when the owning extension object is present on the same material and its identifier is declared in `extensionsUsed`. Its dependencies, exclusions, units, and shading equations continue to apply. The owning property may be omitted when it has a defined default. Effect strengths use the bound value rather than the stored factor or default. Unbound inputs keep their ordinary calculations.
+The following binding points are available when the owning extension object is present on the same material and its identifier is declared in `extensionsUsed`. Its dependencies, exclusions, units, and shading equations continue to apply. Authors do not need to create matching factor or texture-info properties solely for a binding; the owning extension may use its defaults. Effect strengths use the bound value rather than the stored factor or default. Unbound inputs keep their ordinary calculations.
 
 These bindings use the same `{ "index", "output" }` references as core inputs. A binding supplies the evaluated input shown below, replacing its factor/texture calculation. They are input names, not JSON Pointer animation targets. Graph-interface animation continues to use the paths defined in the animation section.
 
