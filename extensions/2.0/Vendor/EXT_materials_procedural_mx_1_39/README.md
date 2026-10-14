@@ -102,7 +102,7 @@ Nested authoring graphs must be flattened. Renderer source/closure nodes cannot 
 
 An authoring MaterialX `gltf_pbr` surface is a conversion endpoint, not a replacement BRDF serialized in the asset. Convert its supported input graphs into the base extension's named channels. The resulting glTF material retains its standard metallic-roughness shading model or `KHR_materials_unlit` shading model, as appropriate. The base extension supplies the channel value, color, alpha, normal and factor rules.
 
-MaterialX surface-model translations that can be expressed as valid pattern graphs into the supported glTF channels MAY be converted. Importing an arbitrary MaterialX surface shader unchanged, custom BRDF parameters, displacement, or extension-defined material inputs is outside this profile. Conversion to glTF may therefore be an explicitly documented approximation of a source surface model, distinct from exact preservation of the transferred pattern graphs.
+MaterialX surface-model translations that can be expressed as valid pattern graphs into the supported glTF channels MAY be converted, including the extension-owned inputs listed in `KHR_materials_procedural`. The owning extension must be present on the material. Importing an arbitrary MaterialX surface shader unchanged, custom BRDF parameters, or displacement is outside this profile. Conversion to glTF may therefore be an explicitly documented approximation of a source surface model, distinct from exact preservation of the transferred pattern graphs.
 
 ## Validation and examples
 

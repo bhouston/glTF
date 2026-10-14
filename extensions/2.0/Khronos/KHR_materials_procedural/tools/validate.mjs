@@ -7,9 +7,10 @@ import Ajv from 'ajv';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { visit } from 'jsonc-parser';
+import { materialBindings } from './material-bindings.mjs';
 export const directory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const KHR = 'KHR_materials_procedural', MX = 'EXT_materials_procedural_mx_1_39';
-const channels = { baseColor: 'color3', metallic: 'float', roughness: 'float', opacity: 'float', normal: 'vector3', occlusion: 'float', emissive: 'color3' };
+const channels = Object.fromEntries(Object.entries(materialBindings).map(([name, binding]) => [name, binding.type]));
 const library = JSON.parse(fs.readFileSync(path.join(directory, 'tools/materialx-library.json'), 'utf8'));
 const geometry = new Set(['texcoord', 'geomcolor', 'position', 'normal', 'tangent', 'bitangent']);
 const spatial = new Set([...geometry, 'image', 'tiledimage', 'triplanarprojection']);
@@ -229,6 +230,25 @@ export function validate(asset) {
     if (root.procedurals[b.index]?.outputs?.[b.output]?.type !== channels[name]) fail(`material/${i}/${name}: channel type/reference mismatch`);
     if (m.extensions?.KHR_materials_unlit && !['baseColor', 'opacity'].includes(name)) fail('Unlit material uses lit channel');
     const g = root.procedurals[b.index];
+    const descriptor = materialBindings[name];
+    if (descriptor?.owner) {
+      const owner = descriptor.owner;
+      if (!Object.hasOwn(m.extensions ?? {}, owner)) fail(`material/${i}/${name}: missing owning extension ${owner}`);
+      if (!used.includes(owner)) fail(`material/${i}/${name}: owning extension ${owner} missing from extensionsUsed`);
+      if (owner === 'KHR_materials_dispersion' && !m.extensions?.KHR_materials_volume) fail(`material/${i}/${name}: dispersion requires KHR_materials_volume`);
+      if (owner === 'KHR_materials_dispersion' && !used.includes('KHR_materials_volume')) fail(`material/${i}/${name}: volume dependency missing from extensionsUsed`);
+      if (name === 'ior' && m.extensions?.KHR_materials_ior?.ior === 0) fail(`material/${i}/ior: cannot bind immutable zero-IOR compatibility mode`);
+      const port = g?.outputs[b.output];
+      if (port) {
+        const env = rootEnvironment(g);
+        if (descriptor.uniform && !uniform(port, g, env)) fail(`material/${i}/${name}: homogeneous-medium property requires a uniform output`);
+        const value = literal(port, g, env);
+        if (Array.isArray(value)) {
+          if (value.some(v => !Number.isFinite(v) || (descriptor.min !== undefined && (descriptor.exclusiveMin ? v <= descriptor.min : v < descriptor.min)) || (descriptor.max !== undefined && v > descriptor.max))) fail(`material/${i}/${name}: value outside binding domain`);
+          if (descriptor.nonzero && value.every(v => v === 0)) fail(`material/${i}/${name}: direction or normal must be nonzero`);
+        }
+      }
+    }
     if (g?.outputs[b.output]) for (const mesh of asset.meshes ?? []) for (const primitive of mesh.primitives) if (primitive.material === i) contextVisit(g, rootEnvironment(g), primitive, [g.outputs[b.output]]);
   }
   const animationTargets = new WeakMap();

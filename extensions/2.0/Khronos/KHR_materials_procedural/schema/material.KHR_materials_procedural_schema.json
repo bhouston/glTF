@@ -325,6 +325,551 @@
                 }
               }
             }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "anisotropyStrength"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "anisotropyDirection"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_anisotropy"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "clearcoat"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "clearcoatRoughness"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "clearcoatNormal"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_clearcoat"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "dispersion"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_dispersion"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "emissiveStrength"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_emissive_strength"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "ior"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_ior"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "iridescence"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "iridescenceIor"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "iridescenceThickness"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_iridescence"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "sheenColor"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "sheenRoughness"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_sheen"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "specular"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "specularColor"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_specular"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "transmission"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_transmission"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "thickness"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "attenuationDistance"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "attenuationColor"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_volume"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "dispersion"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_volume"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "ior"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "properties": {
+                    "KHR_materials_ior": {
+                      "properties": {
+                        "ior": {
+                          "not": {
+                            "const": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         ]
       }
@@ -748,5 +1293,552 @@
   "required": [
     "extensionsUsed",
     "extensions"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "anisotropyStrength"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "anisotropyDirection"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_anisotropy"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "clearcoat"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "clearcoatRoughness"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "clearcoatNormal"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_clearcoat"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "dispersion"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_dispersion"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "emissiveStrength"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_emissive_strength"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "ior"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_ior"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "iridescence"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "iridescenceIor"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "iridescenceThickness"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_iridescence"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "sheenColor"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "sheenRoughness"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_sheen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "specular"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "specularColor"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_specular"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "transmission"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_transmission"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "thickness"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "attenuationDistance"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "attenuationColor"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_volume"
+            }
+          }
+        }
+      }
+    }
   ]
 }

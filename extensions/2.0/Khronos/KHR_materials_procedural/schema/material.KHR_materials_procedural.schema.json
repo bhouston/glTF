@@ -49,6 +49,63 @@
         },
         "emissive": {
           "$ref": "#/definitions/binding"
+        },
+        "anisotropyStrength": {
+          "$ref": "#/definitions/binding"
+        },
+        "anisotropyDirection": {
+          "$ref": "#/definitions/binding"
+        },
+        "clearcoat": {
+          "$ref": "#/definitions/binding"
+        },
+        "clearcoatRoughness": {
+          "$ref": "#/definitions/binding"
+        },
+        "clearcoatNormal": {
+          "$ref": "#/definitions/binding"
+        },
+        "dispersion": {
+          "$ref": "#/definitions/binding"
+        },
+        "emissiveStrength": {
+          "$ref": "#/definitions/binding"
+        },
+        "ior": {
+          "$ref": "#/definitions/binding"
+        },
+        "iridescence": {
+          "$ref": "#/definitions/binding"
+        },
+        "iridescenceIor": {
+          "$ref": "#/definitions/binding"
+        },
+        "iridescenceThickness": {
+          "$ref": "#/definitions/binding"
+        },
+        "sheenColor": {
+          "$ref": "#/definitions/binding"
+        },
+        "sheenRoughness": {
+          "$ref": "#/definitions/binding"
+        },
+        "specular": {
+          "$ref": "#/definitions/binding"
+        },
+        "specularColor": {
+          "$ref": "#/definitions/binding"
+        },
+        "transmission": {
+          "$ref": "#/definitions/binding"
+        },
+        "thickness": {
+          "$ref": "#/definitions/binding"
+        },
+        "attenuationDistance": {
+          "$ref": "#/definitions/binding"
+        },
+        "attenuationColor": {
+          "$ref": "#/definitions/binding"
         }
       },
       "additionalProperties": false

@@ -28,7 +28,7 @@ Written against glTF 2.0. The key words **MUST**, **MUST NOT**, **REQUIRED**, **
 
 This extension defines procedural graphs that compute glTF material inputs from constants, geometric streams, and sampled resources. Graphs use MaterialX-compatible nodes to describe patterns and material-channel calculations without storing each result as a bitmap. The existing glTF material model determines shading. Implementations MAY compile graphs into material shaders or evaluate them by another method that preserves their behavior.
 
-Graphs supply the core metallic-roughness inputs and the base color/opacity inputs of `KHR_materials_unlit`. BSDFs, EDFs, closures, surface/displacement shaders and executable source are excluded. Binding to inputs introduced by other material extensions requires a separate specification. The emissive rule below defines the interaction with `KHR_materials_emissive_strength`.
+Graphs supply core material inputs and the inputs of the material extensions listed below. BSDFs, EDFs, closures, surface/displacement shaders and executable source are excluded. The material model and extension shading equations remain unchanged.
 
 This extension **MUST NOT** be used on a material that uses `KHR_materials_pbrSpecularGlossiness`.
 
@@ -104,11 +104,34 @@ A binding replaces the complete conventional calculation of that channel. The im
 - Bound `metallic` and `roughness` replace their respective factors and texture samples.
 - Bound `normal` is already a signed world-space shading normal, not an RGB-encoded bitmap value. `normalTexture.scale` is not applied. The material's ordinary double-sided back-face normal reversal is applied after graph evaluation. A zero-length result is invalid. Authors converting a tangent-space bitmap normal must decode it and transform through an explicit tangent frame in the graph, or use the profile's MaterialX `normalmap` node, whose output is world-space. Core glTF normal handling remains unchanged when this channel is unbound.
 - Bound `occlusion` already incorporates any desired strength; `occlusionTexture.strength` is not applied.
-- Bound `emissive` replaces `emissiveFactor` and `emissiveTexture`. If `KHR_materials_emissive_strength` is present, its strength is also included in the graph's final radiance and **MUST NOT** be applied again to that bound channel.
+- Bound `emissive` replaces `emissiveFactor` and `emissiveTexture`. `KHR_materials_emissive_strength`, when present, multiplies this result once, using the bound `emissiveStrength` or its ordinary value.
 
 For unbound channels, all ordinary glTF calculations continue to apply. `alphaMode`, `alphaCutoff`, and `doubleSided` remain material properties and are not graph inputs. This version does not bind the discrete choice of a material model. On an unlit material, only `baseColor` and `opacity` bindings are valid. Unknown channel names are invalid, rather than ignored aliases.
 
 The extension object is permitted only on the root glTF object and materials.
+
+### Interactions with other material extensions
+
+The following binding points are available when the owning extension object is present on the same material and its identifier is declared in `extensionsUsed`. Its dependencies, exclusions, units, and shading equations continue to apply. The owning property may be omitted when it has a defined default. Unbound inputs keep their ordinary calculations.
+
+These bindings use the same `{ "index", "output" }` references as core inputs. A binding supplies the evaluated input shown below, replacing its factor/texture calculation. They are input names, not JSON Pointer animation targets. Graph-interface animation continues to use the paths defined in the animation section.
+
+| Owning extension | Binding points and output types | Evaluated inputs |
+| --- | --- | --- |
+| [KHR_materials_anisotropy](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_anisotropy/README.md) | `anisotropyStrength`: `float`; `anisotropyDirection`: `vector2` | Strength in [0, 1]; nonzero direction in tangent/bitangent space, normalized before use. Direction includes rotation. |
+| [KHR_materials_clearcoat](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_clearcoat/README.md) | `clearcoat`: `float`; `clearcoatRoughness`: `float`; `clearcoatNormal`: `vector3` | Coat intensity and perceptual roughness in [0, 1]; nonzero world-space coat shading normal, normalized before use. |
+| [KHR_materials_dispersion](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_dispersion/README.md) | `dispersion`: `float` | Nonnegative dispersion parameter (20/Abbe number). Requires `KHR_materials_volume`. |
+| [KHR_materials_emissive_strength](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_emissive_strength/README.md) | `emissiveStrength`: `float` | Nonnegative multiplier of core emission. |
+| [KHR_materials_ior](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_ior/README.md) | `ior`: `float` | Index of refraction, at least 1. A material with static JSON `ior: 0` uses immutable compatibility mode and **MUST NOT** have an `ior` binding. |
+| [KHR_materials_iridescence](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_iridescence/README.md) | `iridescence`: `float`; `iridescenceIor`: `float`; `iridescenceThickness`: `float` | Intensity in [0, 1]; film IOR at least 1; nonnegative evaluated film thickness in nanometres. |
+| [KHR_materials_sheen](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_sheen/README.md) | `sheenColor`: `color3`; `sheenRoughness`: `float` | Linear Rec.709 sheen color and perceptual roughness, in [0, 1]. |
+| [KHR_materials_specular](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_specular/README.md) | `specular`: `float`; `specularColor`: `color3` | Strength in [0, 1]; nonnegative linear Rec.709 color, with values above 1 permitted. |
+| [KHR_materials_transmission](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_transmission/README.md) | `transmission`: `float` | Transmission fraction in [0, 1], separately from alpha coverage. |
+| [KHR_materials_volume](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_volume/README.md) | `thickness`: `float`; `attenuationDistance`: `float`; `attenuationColor`: `color3` | Nonnegative mesh-coordinate thickness; uniform, strictly positive world-space attenuation distance; uniform linear attenuation color in [0, 1]. |
+
+Outputs **MUST** satisfy these domains. The owning extension's material requirements still apply, including anisotropy tangent-space requirements, clearcoat layering, dispersion's volume dependency, and volume's requirement for a transmissive material. Clients ignore bindings belonging to unsupported optional material extensions; required-extension handling is unchanged.
+
+Bound anisotropy direction replaces the decoded texture direction and `anisotropyRotation`; rotation **MUST NOT** be applied again. Bound clearcoat normal uses the core procedural-normal convention and bypasses `clearcoatNormalTexture` and its scale, independently of the base normal. Bound iridescence thickness replaces the minimum/maximum/texture interpolation; if it is unbound, that interpolation remains unchanged, including when the minimum exceeds the maximum. Bound thickness replaces the thickness factor/texture result; the volume extension's mesh scaling and ray-tracing rules remain applicable. Attenuation still describes a homogeneous medium; a bound distance is finite, while an omitted unbound distance retains the owner's infinite-distance default.
 
 ## Types and values
 
