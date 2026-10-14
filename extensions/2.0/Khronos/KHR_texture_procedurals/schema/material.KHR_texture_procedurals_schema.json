@@ -1,264 +1,108 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "KHR_texture_procedurals glTF Procedural Texture Extension",
+  "$comment": "Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: Apache-2.0",
+  "title": "KHR_texture_procedurals whole-document overlay",
+  "description": "Apply alongside the core glTF 2.0 schema. Semantic reference, library signature, graph type, and cycle validation is also required. Required identifiers must also be a subset of extensionsUsed; this cross-array constraint is validated semantically.",
   "type": "object",
-  "description": "Extension to support procedural texture graphs and definitions",
-  "definitions" : {
-    
-    "port" :
-    {
-      "doc" : "A stand-alone, node or nodegraph port object",
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "nodetype": { "type": "string" },
-        "type": { "type": "string" }
-      },
-      "required": ["nodetype", "type"]
-    },
-
-    "typedef":
-    {
-      "_doc:" : "Supported type definition strings",
-      "type" : "string",       
-      "enum": ["float", "integer", "boolean", "string", "filename", "color3", "color4", "vector2", "vector3", "vector4", "matrix33", "matrix44", "multioutput" ]
-    },
-    
-    "value":
-    {
-      "doc": "An input value. Can be a single number, boolean, string, or array of numbers",
-      "oneOf": [
-        { 
-          "type": "array", 
-          "minItems": 2,
-          "maxItems": 16,
-          "items": { "type": "number" } 
-        },
-        { "type": "string" },
-        { "type": "boolean" },
-        { "type": "number" }
-      ]
-    },
-
-    "graph_input" : 
-    {
-      "doc" : "A input port on a node graph. Either a value or a connection to a texture is required",
-      "allOf": [
-        { "$ref": "#/definitions/port" },
-        { "type" : "object",
-          "properties": {
-            "name": { "type": "string" },
-            "nodetype": { "type": "string", "const" : "input" },
-            "type": { "$ref": "#/definitions/typedef" },
-            "value": { "$ref": "#/definitions/value" } 
-          },
-          "required": ["nodetype", "type"],
-          "oneOf" : [
-              { 
-                "properties": { "value": { "$ref": "#/definitions/value" } },
-                "required": ["value"]
-              },
-              { 
-                "properties": { "texture": { "type": "integer" }},
-                "required": ["texture"]
+  "properties": {
+    "extensionsUsed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "not": {
+          "allOf": [
+            {
+              "pattern": "^EXT_texture_procedurals_mx_"
+            },
+            {
+              "not": {
+                "const": "EXT_texture_procedurals_mx_1_39"
               }
-            ]
-        }
-      ]
-    },
-
-    "node_input" : 
-    {
-      "doc" : "A input port on a node. Either a value or a connection must be specified",
-      "allOf": [
-        { "$ref": "#/definitions/port" },
-        { "type" : "object",
-          "properties": {
-            "name": { "type": "string" },
-            "nodetype": { "type": "string", "const": "input" },
-            "type": {  "$ref": "#/definitions/typedef" }
-          },
-          "required": ["nodetype", "type"],
-          "oneOf" : [
-              { 
-                "properties": { "value": { "$ref": "#/definitions/value" } },
-                "required": ["value"]
-              },
-              { 
-                "properties": { 
-                  "node": { 
-                    "type": "integer",
-                    "_doc": "A connection to a node in the nodes array"
-                  },
-                  "output": { 
-                    "type": "integer",
-                    "_doc": "A connection to an output on the node. Required if > 1 output on the node"
-                  }  
-                },
-                "required": ["node"]                              
-              },
-              { 
-                "_doc": "A connection to a graph input",
-                "properties": { "input": { "type": "integer" }},
-                "required": ["input"]
-              },
-              { 
-                "_doc:" : "A connection to a texture in the textures array",
-                "properties": { "texture": { "type": "integer" }},
-                "required": ["texture"]
-              }
+            }
           ]
         }
-      ]
-    },
-
-    "output_port" : {
-      "_doc": "A stand-alone, node or nodegraph output port",
-      "type": "object",      
-      "properties": {
-        "name": { "type": "string" },
-        "nodetype": { "type": "string" },
-        "type": { "$ref": "#/definitions/typedef" }
       },
-      "required": ["nodetype", "type"]
-    },
-
-    "node" : {
-      "_doc": "A node in a node graph",
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "nodetype": {
-          "_doc": "A standard library node category or one defined in procedural_definitions",
-          "type": "string" 
-        },
-        "type": { "type": "string" },
-        "inputs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/node_input"
-          }
-        },
-        "outputs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/output_port"
-          }
-        }
-      },
-      "required" : ["nodetype", "type", "outputs"] 
-    },
-
-    "nodegraph" : {
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "nodetype": { 
-          "type": "string", 
-          "const": "nodegraph" 
-        },
-        "type": {  "$ref": "#/definitions/typedef" },
-
-        "inputs": {
-          "type": "array",
-          "items" : {"$ref": "#/definitions/graph_input"}
-        },
-
-        "outputs": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/output_port" }
-        },
-
-        "nodes": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/node" }
-          }
-      },
-      "required" : ["nodetype", "type", "outputs", "nodes"]      
-    },
-
-    "definition_item" : {
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "nodetype": { "type": "string" },
-        "type": { "$ref": "#/definitions/typedef" }
-      },
-      "required" : ["nodetype", "type"]
-    },
-
-    "nodedef" : {
-      "_doc": "A node definition",
+      "uniqueItems": true,
       "allOf": [
-        { "$ref": "#/definitions/definition_item" },
-        { "type" : "object",
-          "properties": {
-            "node" : {
-              "_doc": "Node classification used by nodetype references",
-              "type": "string" 
-            },
-            "nodetype" : {
-              "type" : "string",
-              "const" : "nodedef"
-            },
-            "version": {
-              "_doc" : "Version of the classification",
-              "type": "string" 
-            },
-            "nodegroup": {
-              "_doc" : "Grouping. Should be provided",
-              "type": "string",
-              "default": "texture2d"
-            },
-            "isdefaultversion": { "type": "boolean" },
-
-            "inputs": {
-              "type": "array",
-              "items" : {"$ref": "#/definitions/graph_input"}
-            },
-
-            "outputs": {
-              "type": "array",
-              "items": { "$ref": "#/definitions/output_port" }
-            }
-          },
-          "required" : ["node", "outputs", "inputs"]      
+        {
+          "contains": {
+            "const": "KHR_texture_procedurals"
+          }
+        },
+        {
+          "contains": {
+            "const": "EXT_texture_procedurals_mx_1_39"
+          }
         }
       ]
     },
-
-    "nodegraph_implementatnion" : {
-      "_doc": "A node graph that is a definition's implementation.",
-      "allOf": [
-        { "$ref": "#/definitions/definition_item" },
-        { "type" : "object",
-          "properties": {
-            "nodetype" : {
-              "type" : "string",
-              "const" : "nodegraph"
+    "extensionsRequired": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "not": {
+          "allOf": [
+            {
+              "pattern": "^EXT_texture_procedurals_mx_"
             },
-            "nodedef": { 
-              "_doc": "The node definition for this function",
-              "type": "number" 
-            },
-
-            "outputs": {
-              "type": "array",
-              "items": { "$ref": "#/definitions/output_port" }
-            },
-
-            "nodes": {
-              "type": "array",
-              "items": { "$ref": "#/definitions/node" }
+            {
+              "not": {
+                "const": "EXT_texture_procedurals_mx_1_39"
+              }
             }
+          ]
+        }
+      },
+      "uniqueItems": true,
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              {
+                "contains": {
+                  "const": "KHR_texture_procedurals"
+                }
+              },
+              {
+                "contains": {
+                  "const": "EXT_texture_procedurals_mx_1_39"
+                }
+              }
+            ]
           },
-          "required" : ["nodedef", "outputs", "nodes"]    
-        }              
+          "then": {
+            "allOf": [
+              {
+                "contains": {
+                  "const": "KHR_texture_procedurals"
+                }
+              },
+              {
+                "contains": {
+                  "const": "EXT_texture_procedurals_mx_1_39"
+                }
+              }
+            ]
+          }
+        }
       ]
-    }
-  },
-
-  "properties": {
+    },
+    "extensions": {
+      "type": "object",
+      "properties": {
+        "KHR_texture_procedurals": {
+          "$ref": "glTF.KHR_texture_procedurals.schema.json"
+        }
+      },
+      "required": [
+        "KHR_texture_procedurals"
+      ],
+      "not": {
+        "required": [
+          "EXT_texture_procedurals_mx_1_39"
+        ]
+      }
+    },
     "materials": {
       "type": "array",
       "items": {
@@ -267,37 +111,169 @@
           "extensions": {
             "type": "object",
             "properties": {
-              "KHR_materials_unlit": { "type": "object" }
+              "KHR_texture_procedurals": {
+                "$ref": "material.KHR_texture_procedurals.schema.json"
+              }
+            },
+            "not": {
+              "required": [
+                "EXT_texture_procedurals_mx_1_39"
+              ]
             }
           },
-          "name": { "type": "string" },
           "pbrMetallicRoughness": {
             "type": "object",
             "properties": {
               "baseColorTexture": {
                 "type": "object",
                 "properties": {
-                  "index": { "type": "integer" },
                   "extensions": {
                     "type": "object",
-                    "properties": {
-                      "KHR_texture_procedurals": {
-                        "type": "object",
-                        "properties": {
-                          "index": { "type": "integer" },
-                          "output": { "type": "integer" }
+                    "not": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "KHR_texture_procedurals"
+                          ]
                         },
-                        "required": ["index"]
-                      }
-                    },
-                    "required": ["KHR_texture_procedurals"]
+                        {
+                          "required": [
+                            "EXT_texture_procedurals_mx_1_39"
+                          ]
+                        }
+                      ]
+                    }
                   }
+                }
+              },
+              "metallicRoughnessTexture": {
+                "type": "object",
+                "properties": {
+                  "extensions": {
+                    "type": "object",
+                    "not": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "KHR_texture_procedurals"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "EXT_texture_procedurals_mx_1_39"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "normalTexture": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "KHR_texture_procedurals"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "EXT_texture_procedurals_mx_1_39"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "occlusionTexture": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "KHR_texture_procedurals"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "EXT_texture_procedurals_mx_1_39"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "emissiveTexture": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "KHR_texture_procedurals"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "EXT_texture_procedurals_mx_1_39"
+                      ]
+                    }
+                  ]
                 }
               }
             }
           }
         },
-        "required": ["pbrMetallicRoughness"]
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_unlit",
+                    "KHR_texture_procedurals"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "properties": {
+                    "KHR_texture_procedurals": {
+                      "properties": {
+                        "bindings": {
+                          "propertyNames": {
+                            "enum": [
+                              "baseColor",
+                              "opacity"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "textures": {
@@ -305,9 +281,24 @@
       "items": {
         "type": "object",
         "properties": {
-          "source": { "type": "integer" }
-        },
-        "required": ["source"]
+          "extensions": {
+            "type": "object",
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "KHR_texture_procedurals"
+                  ]
+                },
+                {
+                  "required": [
+                    "EXT_texture_procedurals_mx_1_39"
+                  ]
+                }
+              ]
+            }
+          }
+        }
       }
     },
     "images": {
@@ -315,41 +306,75 @@
       "items": {
         "type": "object",
         "properties": {
-          "uri": { "type": "string" },
-          "name": { "type": "string" }
-        },
-        "required": ["uri"]
-      }
-    },
-    "extensionsUsed": {
-      "type": "array",
-      "items": { "type": "string" },
-      "contains": { "enum": ["KHR_texture_procedurals"] }
-    },
-    "extensions": {
-      "type": "object",
-      "properties": {
-        "KHR_texture_procedurals": {
-          "type": "object",
-          "properties": {
-
-            "procedurals": {
-              "_doc": "A list of procedural texture graphs",
-              "type": "array",
-              "items": { "$ref": "#/definitions/nodegraph" }
-            },
-
-            "procedural_definitions": {
-              "_doc": "A list of procedural node definitions and corresponding implementations",
-              "type": "array",
-              "items": { "$ref": "#/definitions/definition_item" }
+          "extensions": {
+            "type": "object",
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "KHR_texture_procedurals"
+                  ]
+                },
+                {
+                  "required": [
+                    "EXT_texture_procedurals_mx_1_39"
+                  ]
+                }
+              ]
             }
-          },
-          "required": ["procedurals"]
+          }
         }
-      },
-      "required": ["KHR_texture_procedurals"]
+      }
     }
   },
-  "required": ["materials", "extensionsUsed", "extensions"]
+  "required": [
+    "extensionsUsed",
+    "extensions"
+  ],
+  "definitions": {
+    "noCompanionPayload": {
+      "if": {
+        "type": "object"
+      },
+      "then": {
+        "properties": {
+          "extensions": {
+            "if": {
+              "type": "object"
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "EXT_texture_procedurals_mx_1_39"
+                ]
+              }
+            },
+            "allOf": [
+              {
+                "$ref": "#/definitions/noCompanionPayload"
+              }
+            ]
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/definitions/noCompanionPayload"
+        }
+      },
+      "else": {
+        "if": {
+          "type": "array"
+        },
+        "then": {
+          "items": {
+            "$ref": "#/definitions/noCompanionPayload"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/definitions/noCompanionPayload"
+    }
+  ]
 }

@@ -1,0 +1,176 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "KHR_texture_procedurals fixtures",
+    "extras": {
+      "copyright": "Copyright 2026 The Khronos Group Inc.",
+      "license": "Apache-2.0"
+    }
+  },
+  "extensionsUsed": [
+    "KHR_texture_procedurals",
+    "EXT_texture_procedurals_mx_1_39"
+  ],
+  "extensions": {
+    "KHR_texture_procedurals": {
+      "procedurals": [
+        {
+          "nodetype": "nodegraph",
+          "type": "multioutput",
+          "inputs": {},
+          "nodes": [
+            {
+              "nodetype": "constant",
+              "type": "float",
+              "inputs": {
+                "value": {
+                  "nodetype": "input",
+                  "type": "float",
+                  "value": [
+                    0.15
+                  ]
+                }
+              },
+              "outputs": {
+                "out": {
+                  "nodetype": "output",
+                  "type": "float"
+                }
+              }
+            },
+            {
+              "nodetype": "constant",
+              "type": "float",
+              "inputs": {
+                "value": {
+                  "nodetype": "input",
+                  "type": "float",
+                  "value": [
+                    0.85
+                  ]
+                }
+              },
+              "outputs": {
+                "out": {
+                  "nodetype": "output",
+                  "type": "float"
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "metal": {
+              "nodetype": "output",
+              "type": "float",
+              "node": 0,
+              "output": "out"
+            },
+            "rough": {
+              "nodetype": "output",
+              "type": "float",
+              "node": 1,
+              "output": "out"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5,
+          0.5,
+          0.5,
+          1
+        ],
+        "metallicFactor": 0.2,
+        "roughnessFactor": 0.8
+      },
+      "extensions": {
+        "KHR_texture_procedurals": {
+          "bindings": {
+            "metallic": {
+              "index": 0,
+              "output": "metal"
+            },
+            "roughness": {
+              "index": 0,
+              "output": "rough"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 120,
+      "uri": "data:application/octet-stream;base64,AACAvwAAgL8AAAAAAACAPwAAgL8AAAAAAACAPwAAgD8AAAAAAACAvwAAgL8AAAAAAACAPwAAgD8AAAAAAACAvwAAgD8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAAAAAAIA/AACAPwAAAAAAAIA/"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 72,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 72,
+      "byteLength": 48,
+      "target": 34962
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 6,
+      "type": "VEC3",
+      "min": [
+        -1,
+        -1,
+        0
+      ],
+      "max": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 6,
+      "type": "VEC2"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "TEXCOORD_0": 1
+          },
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "scene": 0
+}

@@ -1,689 +1,117 @@
-# EXT\_texture\_procedurals\_mx\_1\_39
+<!-- Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: CC-BY-4.0 -->
+
+# EXT_texture_procedurals_mx_1_39
 
 ## Contributors
 
-- Ashwin Bhat, Autodesk, ashwin.bhat@autodesk.com
-- Alexey Knyazev, Individual Contributor, [@lexaknyazev](https://github.com/lexaknyazev)
-- Bernard Kwok, Individual Contributor, [@kwokcb](https://github.com/kwokcb)  
-- Ed Mackey, AGI, [@emackey](https://twitter.com/emackey)
-- Lutz Kettner, NVIDIA, lkettner@nvidia.com
-- Richard Sahlin, IKEA [@rsahlin](https://github.com/rsahlin)
-- Timothy Blut, NVIDIA, tblut@nvidia.com
-
-Copyright 2024 The Khronos Group Inc.
-See [Appendix](#appendix-full-khronos-copyright-statement) for full Khronos Copyright Statement.
+- Ashwin Bhat, Autodesk
+- Alexey Knyazev, Individual Contributor
+- Bernard Kwok, Individual Contributor
+- Ed Mackey, AGI
+- Lutz Kettner, NVIDIA
+- Richard Sahlin, IKEA
+- Timothy Blut, NVIDIA
+- Ben Houston, Individual Contributor
 
 ## Status
 
-Draft
+Draft. This is the MaterialX profile for the revised [KHR_texture_procedurals](../../Khronos/KHR_texture_procedurals/README.md) material-channel graph format. It is not a declaration that the complete MaterialX ecosystem or a new material model is supported.
 
 ## Dependencies
 
-Written against the glTF 2.0 spec and KHR_texture_procedurals
+Written against glTF 2.0 and `KHR_texture_procedurals`. Normative node definitions and semantics are pinned to [MaterialX v1.39.0](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0), commit `f679db7875a928fd0162cd38bdc7461b2aa81c0f`. A later patch release MUST NOT silently change the semantics of this profile. A future incompatible profile requires a new extension identifier.
 
-## Overview
+## Declaration
 
-This extension provides a mechanism to author procedural pattern graphs using node elements defined in MaterialX Specification 1.39.
+Both `KHR_texture_procedurals` and `EXT_texture_procedurals_mx_1_39` MUST be listed in `extensionsUsed`. The library applies to every procedural graph and custom functional definition in the asset. More than one `EXT_texture_procedurals_mx_*` identifier is invalid, including in `extensionsRequired`. If either identifier is required, both MUST be required. Other library profiles cannot be combined with this one.
 
-### Table of Contents
-
-- [Motivation](#motivation)
-- [Extension Declaration](#extension-declaration)
-- [JSON Schema](#json-schema)
-- [Example](#Example)
-- [Resources](#resources)
-
-### Motivation
-
-While `KHR_texture_procedurals` defines the schema to represent a procedural graph to extend the capabilities of glTF materials beyond what is possible with traditional texture maps. 
-
-For seamless interoperability this extension defines the schema for nodes or elements of the procedural graph. 
-
-More specifically this extension defines support for nodes in the MaterialX 1.39 specification. This ensures that the procedural graphs can be easily converted to MaterialX and USDShade graphs.
-
-
-## Extension Declaration
-
-Usage of the procedural structure is indicated by adding the `EXT_texture_procedurals_mx_<version>` extension identifier to the `extensionsUsed` array. Where `<version>` corresponds to the MaterialX version separated by an underscores. For example version 1.39 is represented as `EXT_texture_procedurals_mx_1_39`.
-
-It is required that `KHR_texture_procedurals` also be defined as this specifies the JSON schema for the procedural graphs.
-
-Note that: 
-
-1. This is the only location that the `EXT_texture_procedurals_mx_1_39` extension identifier is allowed
-to be specified. The explicit meaning is that definitions from this version of MaterialX are used for the entire glTF asset. 
-
-  Below is an example specifiy usage of MaterialX version 1.39.
-  ```json
-  {
-      "extensionsUsed": [
-          "KHR_texture_procedurals",
-          "EXT_texture_procedurals_mx_1_39"
-      ]
-  }
-  ``` 
-
-2. It is invalid to specify more than one version of MaterialX in the same glTF asset.
-
-Usage of a given extension is defined in the `extensions` object as follows:
 ```json
 {
+  "asset": { "version": "2.0" },
+  "extensionsUsed": ["KHR_texture_procedurals", "EXT_texture_procedurals_mx_1_39"],
+  "extensionsRequired": ["KHR_texture_procedurals", "EXT_texture_procedurals_mx_1_39"],
+  "materials": [{
     "extensions": {
-        "KHR_texture_procedurals": {
-            "procedurals": []
-        }
-    }
-}
-```
-The `procedurals` array specifies the procedural graphs for a given set of nodes that matching the MaterialX version specified.
-
-## Handling MaterialX glTF PBR Nodes
-
-The glTF PBR node specified within MaterialX exposes a number of input ports which may not map 1:1 with the glTF PBR material for texture mapping. That is, `texture_info` mappings in glTF PBR may not map directly to the input ports of the MaterialX PBR node.
-
-One example is the mismatch of `metalicRoughnessTexture` which is a single packed 3 or 4  channel image which is minimally split into two input ports `metallic` and `roughness` on a glTF PBR shader in MaterialX.
-
-Below is the Boombox glTF example as expressed in MaterialX. The top image shows the mapping to the shader port connects and the bottom a subgraph which shows how an ORM image is split to the `metallic` and `roughness` and `occlusion` ports.
-
-<img src="figures/boombox_mapping.png" width=60%>
-<img src="figures/boombox_mapping2.png" width=60%>
-
-Any channels mapped on the MaterialX glTF PBR node which do not correspond to a `texture_info` mapping should be ignored as being invalid or pre-processed to insert the appropriate node within the procedural graph to combine the outputs so that they are mappable. For the example, a `combine` node has been added. The 
-split outputs can be reconstituted when converted back (e.g. to MaterialX) for an integration which uses separated inputs.
-
-<img src="figures/combine_channels.png" width=60%>
-
-## JSON Schema
-
-The JSON schema for this extension is defined in the schema folder. 
-
-[material.EXT_texture_procedurals_mx_1_39.schema.json](schema/material.EXT_texture_procedurals_mx_1_39_schema.json)
-
-## Example
-
-The following is a "checkerboard" pattern which is defined as a procedural graph. This graph is mapped to the "base color" on a material.
-
-```mermaid
-
-graph LR; 
-    NG_checkerboard_color3_N_mtlxmix[mix] --> NG_checkerboard_color3_out([out])
-    style NG_checkerboard_color3_out fill:#0C0, color:#111
-    NG_checkerboard_color3_color2INT([color2]) ==.bg==> NG_checkerboard_color3_N_mtlxmix[mix]
-    style NG_checkerboard_color3_color2INT fill:#0CF, color:#111
-    NG_checkerboard_color3_color1INT([color1]) ==.fg==> NG_checkerboard_color3_N_mtlxmix[mix]
-    style NG_checkerboard_color3_color1INT fill:#0CF, color:#111
-    NG_checkerboard_color3_N_modulo[modulo] --".mix"--> NG_checkerboard_color3_N_mtlxmix[mix]
-    NG_checkerboard_color3_N_mtlxdotproduct[dotproduct] --".in1"--> NG_checkerboard_color3_N_modulo[modulo]
-    NG_checkerboard_color3_N_mtlxfloor[floor] --".in1"--> NG_checkerboard_color3_N_mtlxdotproduct[dotproduct]
-    NG_checkerboard_color3_N_mtlxsubtract[subtract] --".in"--> NG_checkerboard_color3_N_mtlxfloor[floor]
-    NG_checkerboard_color3_uvoffsetINT([uvoffset]) ==.in2==> NG_checkerboard_color3_N_mtlxsubtract[subtract]
-    style NG_checkerboard_color3_uvoffsetINT fill:#0CF, color:#111
-    NG_checkerboard_color3_N_mtlxmult[multiply] --".in1"--> NG_checkerboard_color3_N_mtlxsubtract[subtract]
-    NG_checkerboard_color3_texcoordINT([texcoord]) ==.in1==> NG_checkerboard_color3_N_mtlxmult[multiply]
-    style NG_checkerboard_color3_texcoordINT fill:#0CF, color:#111
-    NG_checkerboard_color3_uvtilingINT([uvtiling]) ==.in2==> NG_checkerboard_color3_N_mtlxmult[multiply]
-    style NG_checkerboard_color3_uvtilingINT fill:#0CF, color:#111
-```
-<sub>Example `checkerboard` graph from MaterialX</sub>
-
-<details>
-<summary>glTF Graph</summary>
-
-```JSON
-{
-  "materials": [
-    {
-      "name": "gltf_pbr_surfaceshader",
-      "pbrMetallicRoughness": {
-        "baseColorTexture": {
-          "index": 0,
-          "extensions": {
-            "KHR_texture_procedurals": {
-              "index": 0
-            }
-          }
+      "KHR_texture_procedurals": {
+        "bindings": {
+          "metallic": { "index": 0, "output": "metallic" },
+          "roughness": { "index": 0, "output": "roughness" }
         }
       }
     }
-  ],
-  "textures": [
-    {
-      "source": 0
-    }
-  ],
-  "images": [
-    {
-      "uri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4z/AfAAQAAf/zKSWvAAAAAElFTkSuQmCC",
-      "name": "KHR_texture_procedural_fallback"
-    }
-  ],
-  "extensionsUsed": [
-    "EXT_texture_procedurals_mx_1_39",
-    "KHR_texture_procedurals"
-  ],
+  }],
   "extensions": {
     "KHR_texture_procedurals": {
-      "procedurals": [
-        {
-          "name": "My_Checker",
-          "nodetype": "nodegraph",
-          "type": "color3",
-          "inputs": [
-            {
-              "name": "color1",
-              "nodetype": "input",
-              "type": "color3",
-              "value": [
-                1.0,
-                0.0,
-                0.0
-              ]
-            },
-            {
-              "name": "color2",
-              "nodetype": "input",
-              "type": "color3",
-              "value": [
-                0.0,
-                1.0,
-                0.0
-              ]
-            },
-            {
-              "name": "uvtiling",
-              "nodetype": "input",
-              "type": "vector2",
-              "value": [
-                8.0,
-                8.0
-              ]
-            },
-            {
-              "name": "uvoffset",
-              "nodetype": "input",
-              "type": "vector2",
-              "value": [
-                0.0,
-                0.0
-              ]
-            }
-          ],
-          "outputs": [
-            {
-              "name": "out",
-              "nodetype": "output",
-              "type": "color3",
-              "node": 5
-            }
-          ],
-          "nodes": [
-            {
-              "name": "N_mtlxmult",
-              "nodetype": "multiply",
-              "type": "vector2",
-              "inputs": [
-                {
-                  "name": "in1",
-                  "nodetype": "input",
-                  "type": "vector2",
-                  "node": 6
-                },
-                {
-                  "name": "in2",
-                  "nodetype": "input",
-                  "type": "vector2",
-                  "input": 2
-                }
-              ],
-              "outputs": [
-                {
-                  "nodetype": "output",
-                  "name": "out",
-                  "type": "vector2"
-                }
-              ]
-            },
-            {
-              "name": "N_mtlxsubtract",
-              "nodetype": "subtract",
-              "type": "vector2",
-              "inputs": [
-                {
-                  "name": "in1",
-                  "nodetype": "input",
-                  "type": "vector2",
-                  "node": 0
-                },
-                {
-                  "name": "in2",
-                  "nodetype": "input",
-                  "type": "vector2",
-                  "input": 3
-                }
-              ],
-              "outputs": [
-                {
-                  "nodetype": "output",
-                  "name": "out",
-                  "type": "vector2"
-                }
-              ]
-            },
-            {
-              "name": "N_mtlxfloor",
-              "nodetype": "floor",
-              "type": "vector2",
-              "inputs": [
-                {
-                  "name": "in",
-                  "nodetype": "input",
-                  "type": "vector2",
-                  "node": 1
-                }
-              ],
-              "outputs": [
-                {
-                  "nodetype": "output",
-                  "name": "out",
-                  "type": "vector2"
-                }
-              ]
-            },
-            {
-              "name": "N_mtlxdotproduct",
-              "nodetype": "dotproduct",
-              "type": "float",
-              "inputs": [
-                {
-                  "name": "in1",
-                  "nodetype": "input",
-                  "type": "vector2",
-                  "node": 2
-                },
-                {
-                  "name": "in2",
-                  "nodetype": "input",
-                  "type": "vector2",
-                  "value": [
-                    1.0,
-                    1.0
-                  ]
-                }
-              ],
-              "outputs": [
-                {
-                  "nodetype": "output",
-                  "name": "out",
-                  "type": "float"
-                }
-              ]
-            },
-            {
-              "name": "N_modulo",
-              "nodetype": "modulo",
-              "type": "float",
-              "inputs": [
-                {
-                  "name": "in1",
-                  "nodetype": "input",
-                  "type": "float",
-                  "node": 3
-                },
-                {
-                  "name": "in2",
-                  "nodetype": "input",
-                  "type": "float",
-                  "value": 2.0
-                }
-              ],
-              "outputs": [
-                {
-                  "nodetype": "output",
-                  "name": "out",
-                  "type": "float"
-                }
-              ]
-            },
-            {
-              "name": "N_mtlxmix",
-              "nodetype": "mix",
-              "type": "color3",
-              "inputs": [
-                {
-                  "name": "bg",
-                  "nodetype": "input",
-                  "type": "color3",
-                  "input": 1
-                },
-                {
-                  "name": "fg",
-                  "nodetype": "input",
-                  "type": "color3",
-                  "input": 0
-                },
-                {
-                  "name": "mix",
-                  "nodetype": "input",
-                  "type": "float",
-                  "node": 4
-                }
-              ],
-              "outputs": [
-                {
-                  "nodetype": "output",
-                  "name": "out",
-                  "type": "color3"
-                }
-              ]
-            },
-            {
-              "name": "texcoord",
-              "nodetype": "texcoord",
-              "type": "vector2",
-              "inputs": [
-                {
-                  "name": "index",
-                  "nodetype": "input",
-                  "type": "integer",
-                  "value": 1
-                }
-              ],
-              "outputs": [
-                {
-                  "nodetype": "output",
-                  "name": "out",
-                  "type": "vector2"
-                }
-              ]
-            }
-          ]
+      "procedurals": [{
+        "nodetype": "nodegraph",
+        "type": "multioutput",
+        "inputs": {
+          "metalness": { "nodetype": "input", "type": "float", "value": [0.2] },
+          "roughness": { "nodetype": "input", "type": "float", "value": [0.6] }
+        },
+        "nodes": [],
+        "outputs": {
+          "metallic": { "nodetype": "output", "type": "float", "input": "metalness" },
+          "roughness": { "nodetype": "output", "type": "float", "input": "roughness" }
         }
-      ]
+      }]
     }
   }
 }
 ```
 
-</details>
-<p>
+The companion has **no extension payload**. All graph data belongs to the root base extension and all channel bindings belong to the material base extension. This version is not selected per node or per material.
 
-The equivalent MaterialX representation is:
+## Node-library profile
 
-<details>
-<summary>MaterialX Graph</summary>
+The normative definition sources are the node definitions and functional implementations under MaterialX v1.39.0 [`libraries/stdlib`](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0/libraries/stdlib) and [`libraries/pbrlib`](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0/libraries/pbrlib), subject to the following restrictions. Renderer code implementations are not carried in a glTF asset; runtime libraries implement the specified operations.
 
-```XML
-<?xml version="1.0"?>
-<materialx version="1.38">
-  <nodegraph name="My_Checker">
-    <input name="color1" type="color3" uiname="Color 1" value="1, 0, 0" doc="The first color used in the checkerboard pattern." />
-    <input name="color2" type="color3" uiname="Color 2" value="0, 1, 0" doc="The second color used in the checkerboard pattern."  />
-    <input name="uvtiling" type="vector2" uiname="UV Tiling" value="8, 8" doc="The tiling of the checkerboard pattern along each axis, with higher values producing smaller squares. Default is (8, 8)." />
-    <input name="uvoffset" type="vector2" uiname="UV Offset" value="0, 0" doc="The offset of the checkerboard pattern along each axis. Default is (0, 0)." />
-    <multiply name="N_mtlxmult" type="vector2" >
-      <input name="in1" type="vector2" nodename="texcoord" />
-      <input name="in2" type="vector2" interfacename="uvtiling" />
-    </multiply>
-    <subtract name="N_mtlxsubtract" type="vector2">
-      <input name="in1" type="vector2" nodename="N_mtlxmult" />
-      <input name="in2" type="vector2" interfacename="uvoffset" />
-    </subtract>
-    <floor name="N_mtlxfloor" type="vector2">
-      <input name="in" type="vector2" nodename="N_mtlxsubtract" />
-    </floor>
-    <dotproduct name="N_mtlxdotproduct" type="float">
-      <input name="in1" type="vector2" nodename="N_mtlxfloor" />
-      <input name="in2" type="vector2" value="1, 1" />
-    </dotproduct>
-    <modulo name="N_modulo" type="float">
-      <input name="in1" type="float" nodename="N_mtlxdotproduct" />
-      <input name="in2" type="float" value="2" />
-    </modulo>
-    <mix name="N_mtlxmix" type="color3">
-      <input name="bg" type="color3" interfacename="color2" />
-      <input name="fg" type="color3" interfacename="color1" />
-      <input name="mix" type="float" nodename="N_modulo" />
-    </mix>
-    <output name="out" type="color3" nodename="N_mtlxmix"/>
-    <texcoord name="texcoord" type="vector2">
-      <input name="index" type="integer" value="1" />
-    </texcoord>
-  </nodegraph>
-  <gltf_pbr name="gltf_pbr_surfaceshader" type="surfaceshader" >
-    <input name="base_color" type="color3" nodegraph="My_Checker" />
-  </gltf_pbr>
-  <surfacematerial name="surfacematerial" type="material">
-    <input name="surfaceshader" type="surfaceshader" nodename="gltf_pbr_surfaceshader" />
-  </surfacematerial>
-</materialx>
-```
+An atomic definition is in this profile only if all its input/output types can be represented by the base extension and all of these restrictions are satisfied:
 
-</details>
+- No `BSDF`, `EDF`, `VDF`, `surfaceshader`, `volumeshader`, `displacementshader`, `lightshader`, `material`, closure, array, or other unsupported port types. A conversion or helper node that requires such a port is also excluded. The `gltf_pbr` surface node is not an atomic graph node; its inputs are mapped to the existing glTF material as described below.
+- No target-specific behavior, external source execution, animation/time nodes, application-specific user data, or external filename/node-definition libraries. Texture filenames are resolved only through the base extension's glTF resource-index binding.
+- Geometry access is limited to `texcoord`, `geomcolor`, `position`, `normal`, `tangent`, and `bitangent`. Arbitrary named `geompropvalue`, custom attribute names, and renderer/camera/light properties are excluded. Only texcoord vector2 and geomcolor color3/color4 overloads are included. Texture coordinate and color nodes select numbered glTF streams. Tangent/bitangent index is zero. Geometry `space` and transformpoint/transformvector/transformnormal `fromspace`/`tospace` selections are restricted to `object` and `world`; unsupported spaces are invalid. Normals transform by inverse transpose and tangent handedness follows glTF. The base extension defines deformation, interpolation, and missing-tangent-frame behavior.
+- No alternate color-space requirement. Constants and computed colors are linear Rec.709; image color/data interpretation is the base extension's fixed glTF profile. Definitions requiring other color transforms are excluded.
+- Geometric defaults such as `defaultgeomprop` must be expanded into explicit geometry node connections. Supported ordinary literal defaults and standard string mode/enum values retain MaterialX semantics. Uniform inputs MUST remain uniform through connections; string mode and stream-index inputs cannot be driven by surface-varying data. Image sequences are excluded (`framerange` MUST be empty). Custom enumeration declarations, target metadata, node disabling and output pass-through defaults are not transferred.
 
-<p>
-The OpenUSD representation looks like this:
+Definitions using supported float, color, vector, integer, boolean, string, filename, or matrix types otherwise retain their MaterialX operation, port names, literal defaults, overloads, and functional logic. The profile is not limited to a small noise/operator list. It is bounded by interoperability restrictions rather than a particular renderer's current supported subset. An implementation that does not support a reachable valid profile node MUST apply the base extension's optional/required policy; it MUST NOT approximate an unrelated operation silently. Full conformance requires testing all claimed operations, not merely parsing node names.
 
-<details>
-<summary>OpenUSD Graph</summary>
+Overload selection uses `nodetype`, declared input types, and the complete declared output name/type set. There MUST be exactly one matching definition after applying the restrictions. Required port values and supported default values come from that definition. Standard node `version` resolution uses the default definition of the pinned release; assets cannot select an arbitrary later node version. If selection is ambiguous or a declared input/output is not in the selected definition, the graph is invalid. Custom definitions are selected explicitly by the base extension's `nodedef` index and MUST NOT shadow a standard node category.
 
-```c++
-def "NodeGraphs"
-    {
-        def Shader "N_mtlxmix"
-        {
-            uniform token info:id = "ND_mix_color3"
-            color3f inputs:bg = (0, 0, 0)
-            color3f inputs:fg = (1, 1, 1)
-            float inputs:mix = 0
-            float inputs:mix.connect = </MaterialX/NodeGraphs/N_modulo.outputs:out>
-            color3f outputs:out
-        }
+## MaterialX conversion
 
-        def Shader "N_mtlxdotproduct"
-        {
-            uniform token info:id = "ND_dotproduct_vector2"
-            float2 inputs:in1 = (0, 0)
-            float2 inputs:in1.connect = </MaterialX/NodeGraphs/N_mtlxfloor.outputs:out>
-            float2 inputs:in2 = (1, 1)
-            float outputs:out
-        }
+Converters translate between the base extension's JSON encoding and MaterialX's typed port representation. Port maps remain named maps; node-array references become unique MaterialX node names. Converters MUST preserve graph interface values and links, explicit outputs, matrix values, node defaults, custom functional definitions and selected resources. Labels are not unique identifiers; a converter generates stable unique identifiers without changing public interface names. Image-coordinate orientation is adjusted at the boundary as required by the base extension's top-left convention. MaterialX `normalmap` returns a world-space normal and can bind directly to the world-space `normal` channel; an authoring graph returning a tangent-space normal needs an explicit frame transformation instead.
 
-        def Shader "N_mtlxmult"
-        {
-            uniform token info:id = "ND_multiply_vector2"
-            float2 inputs:in1 = (0, 0)
-            float2 inputs:in1.connect = </MaterialX/NodeGraphs/Texcoord.outputs:out>
-            float2 inputs:in2 = (8, 8)
-            float2 outputs:out
-        }
+| glTF graph type | MaterialX type |
+| --- | --- |
+| `matrix3x3` | `matrix33` |
+| `matrix4x4` | `matrix44` |
+| `boolean`, `integer`, `float`, `vector2/3/4`, `color3/4`, `string`, `filename` | Same named MaterialX type |
+| `integer2/3/4` | Not standard MaterialX 1.39 atomic types; custom functional data only |
 
-        def Shader "N_mtlxsubtract"
-        {
-            uniform token info:id = "ND_subtract_vector2"
-            float2 inputs:in1 = (0, 0)
-            float2 inputs:in1.connect = </MaterialX/NodeGraphs/N_mtlxmult.outputs:out>
-            float2 inputs:in2 = (0, 0)
-            float2 outputs:out
-        }
+Nested authoring graphs must be flattened. Renderer source/closure nodes cannot be transferred merely by preserving opaque metadata. Converters MUST diagnose unsupported content instead of claiming a lossless conversion. Resource filename strings become glTF texture indices, and implicit geometric bindings become explicit nodes.
 
-        def Shader "N_mtlxfloor"
-        {
-            uniform token info:id = "ND_floor_vector2"
-            float2 inputs:in = (0, 0)
-            float2 inputs:in.connect = </MaterialX/NodeGraphs/N_mtlxsubtract.outputs:out>
-            float2 outputs:out
-        }
+### glTF PBR inputs
 
-        def Shader "N_modulo"
-        {
-            uniform token info:id = "ND_modulo_float"
-            float inputs:in1 = 0
-            float inputs:in1.connect = </MaterialX/NodeGraphs/N_mtlxdotproduct.outputs:out>
-            float inputs:in2 = 2
-            float outputs:out
-        }
+An authoring MaterialX `gltf_pbr` surface is a conversion endpoint, not a replacement BRDF serialized in the asset. Convert its supported input graphs into the base extension's named channels. The resulting glTF material retains its standard metallic-roughness shading model or `KHR_materials_unlit` shading model, as appropriate. The base extension supplies the exact final-value, color, alpha, normal, factor and fallback rules.
 
-        def Shader "Texcoord"
-        {
-            uniform token info:id = "ND_texcoord_vector2"
-            int inputs:index = 0
-            float2 outputs:out
-        }
-    }
-```
+Metallic and roughness **MUST** remain independent scalar bindings. They need not originate from the same graph. A converter MUST NOT require a combine node simply to recreate `metallicRoughnessTexture` channel packing. Sampling an existing ORM resource can still use explicit extract nodes, while an optional baked fallback uses ordinary glTF packing.
 
-</details>
+MaterialX surface-model translations that can be expressed as valid pattern graphs into the supported glTF channels MAY be converted. Importing an arbitrary MaterialX surface shader unchanged, custom BRDF parameters, displacement, or extension-defined material inputs is outside this revision. Conversion to glTF may therefore be an explicitly documented approximation of a source surface model, distinct from exact preservation of the transferred pattern graphs.
 
-#### Checkerboard Variants
+## Validation and examples
 
-In the example below we create variants by declaring custom `checkerboard definition and using instances of this definition instances within a graph.
+The [document declaration schema](schema/material.EXT_texture_procedurals_mx_1_39_schema.json) validates the required paired identifiers; it is not a schema for a companion payload or proof of node execution semantics. Use the base extension schemas, core glTF schemas and semantic checks as well.
 
-The inputs on each node instance are specified to to create a “red” and “green” variants.
+Examples and validation tools are shared with the base extension: [examples](../../Khronos/KHR_texture_procedurals/examples/) and [validation guide](../../Khronos/KHR_texture_procedurals/tests/README.md). This avoids maintaining a second example with obsolete port-array syntax. Reference numeric fixtures exercise a subset of elementary operations, not full rendering conformance. Independent runtimes and reference renders remain adoption work.
 
-<details>
-<summary>Variants</summary>
+## References
 
-```JSON
-{
- "procedurals": [
-   // Checkerboard variants graph 
-   {      
-     "name": "checkboard_variants",
-     "nodetype": "nodegraph",
-      "nodes": [
-        {
-          "name": "green_checkerboard",
-          "nodetype": "checkerboard", 
-          "type": "color3",
-          "inputs": [
-            {
-              "name": "color1",
-              "type": "color3",
-              "value": [
-                0,
-                1,
-                0
-              ]
-            }
-          ],
-          "outputs": [
-            {
-              "name": "out",
-              "type": "color3"
-            }
-          ]
-        },
-        {
-          "name" : "red_checkboard",
-          "nodetype": "checkerboard",
-          "type": "color3",
-          "inputs": [
-            {
-              "name": "color1",
-              "type": "color3",
-              "value": [
-                1,
-                0,
-                0
-              ]
-            }
-          ],
-          "outputs": [
-            {
-              "name": "out",
-              "type": "color3"
-            }
-          ]
-        }
-      ],
-        // Route the outputs of the checkerboard nodes
-        "outputs": [
-        {
-          "name": "green_out",
-          "type": "color3",
-          "node": 0
-        },
-        {
-          "name": "red_out",
-          "type": "color3",
-          "node": 1
-        }
-      ]    
-   }
- ]
-}
-```
+- [MaterialX v1.39.0 specification](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0/documents/Specification)
+- [MaterialX v1.39.0 standard definitions](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0/libraries/stdlib)
+- [MaterialX v1.39.0 PBR definitions](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0/libraries/pbrlib)
+- [KHR_texture_procedurals](../../Khronos/KHR_texture_procedurals/README.md)
 
-</details>
-<br>
-These procedural graphs can be bound to downstream materials as desired by choosing the appropriate output node.
-
-<details>
-<summary>Variant Binding</summary>
-
-```JSON
-{
- // Material references
- "materials": [
-   {
-     "name": "green_checker",
-     "pbrMetallicRoughness": {
-       "baseColorTexture": {
-         "index": 0,
-         "extensions": {
-           "KHR_texture_procedurals": {
-             "index": 0, // graph with variants
-             "output": 0 // "green checker" variant
-           }
-         }
-       }
-     },
-     "name": "red_checker",
-     "pbrMetallicRoughness": {
-       "baseColorTexture": {
-         "index": 0,
-         "extensions": {
-           "KHR_texture_procedurals": {
-             "index": 0, // graph with variants
-             "output": 1 // "red checker" variant
-           }
-         }
-       }
-     }
-   }
- ]
-}
-```
-
-</details>
-
-## Resources
-
-- [MaterialX Specification Documents](https://github.com/AcademySoftwareFoundation/MaterialX/blob/main/documents/Specification/MaterialX.Specification.md). 
-- OpenUSD
-  - [USDShade Schema](https://openusd.org/dev/api/usd_shade_page_front.html)
-  - [Shader Definition Registry](https://openusd.org/docs/api/sdr_page_front.html)
-- glTF
-  - [glTF stream names](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html). Note that currently there are no stream names for multiple sets of _tangents_, _bitangents_, _normals_ or _positions_.
-
-### glTF Versus MaterialX and OpenUSD
-
-The aim is (as  much as possible) to preserve the"simplest" most consistent conventions from glTF, MaterialX and OpenUSD.
-
-| Feature | <img src="./figures/materialx.svg" width=48px> | <img src="./figures/OpenUSD.png" width=120px> | <img src="./figures/glTF.svg" width=64px> |
-| --- | --- | --- | --- |
-| **Object String Identifiers** | Yes | Yes | Optional |
-| **Numeric Tuples** | string | list () | array [] |
-| **Connection Syntax**" | string (name in context) | Absolute Path | numeric index |
-| **Explicit Node Outputs** | No | Yes | Yes |
-| **Node Type Grouping** | No | No | Yes |
-| **Reference to nodedef on node instance** | Yes | Yes | No |
-| **NodeGraph Nesting** | "Yes" (not implemented) | Yes | No |
-| **Optional Input Overrides on Nodes** | Yes | Yes | Yes |
-| **Referencing** | Yes | Yes | No |
-| **Definition Versioning** | Yes | Yes | Yes |
-| **Meta-Data** | Yes | Yes | Yes |
-| **Node Definition** | Yes | Yes | Yes |
 
 ## Appendix: Full Khronos Copyright Statement
 

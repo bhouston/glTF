@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: Apache-2.0",
+  "title": "KHR_texture_procedurals material extension",
+  "type": "object",
+  "properties": {
+    "extras": {},
+    "extensions": {
+      "type": "object"
+    },
+    "bindings": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "baseColor": {
+          "$ref": "#/definitions/binding"
+        },
+        "metallic": {
+          "$ref": "#/definitions/binding"
+        },
+        "roughness": {
+          "$ref": "#/definitions/binding"
+        },
+        "opacity": {
+          "$ref": "#/definitions/binding"
+        },
+        "normal": {
+          "$ref": "#/definitions/binding"
+        },
+        "occlusion": {
+          "$ref": "#/definitions/binding"
+        },
+        "emissive": {
+          "$ref": "#/definitions/binding"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "bindings"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "binding": {
+      "type": "object",
+      "properties": {
+        "extras": {},
+        "extensions": {
+          "type": "object"
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "index",
+        "output"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
