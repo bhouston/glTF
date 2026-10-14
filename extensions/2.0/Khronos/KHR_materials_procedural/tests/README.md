@@ -4,7 +4,8 @@
 # Informative validation fixtures
 
 From this extension directory run `npm ci`, `npm test`, and `npm run validate`.
-`node tools/generate-examples.mjs` regenerates all six self-contained fixtures.
+`node tools/generate-examples.mjs` regenerates the six core fixtures;
+`node tools/generate-material-example.mjs` regenerates the material-extension fixture.
 The nonanimated fixtures include a visible quad; the animated fixture isolates
 the shared graph interface and escaped JSON pointer.
 
@@ -16,6 +17,12 @@ The checkerboard and independent-channel tests evaluate elementary arithmetic
 on the CPU. These tests are not GPU render tests or proof of full MaterialX
 operator conformance. Standard signatures, literal defaults, and string modes
 come from the checked-in registry generated from pinned MaterialX 1.39.0 XML.
+
+The material-extension tests cover all 19 conditional binding points across the
+ten referenced KHR extensions, owner declarations, output types and domains,
+HDR specular color, homogeneous-medium uniforms, IOR compatibility mode, and
+emission/attenuation arithmetic. Native extension equations and rendering still
+require their own validators and runtime conformance checks.
 Unknown or profile-excluded node categories and ambiguous overloads are rejected.
 Numeric `enumvalues` UI metadata is not treated as a semantic closed range.
 To regenerate the registry run `node tools/generate-library.mjs`; this downloads

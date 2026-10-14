@@ -21,14 +21,14 @@ for (const name of fs.readdirSync(path.join(directory, 'schema')).filter(n => n.
 const overlay = ajv.getSchema(pathToFileURL(path.join(directory, 'schema/material.KHR_materials_procedural_schema.json')).href);
 function only(name) {
   const asset = read(), owner = materialBindings[name].owner;
-  const keep = [owner, ...(name === 'dispersion' ? ['KHR_materials_volume'] : [])];
+  const keep = [owner, ...((owner === 'KHR_materials_volume' || name === 'dispersion') ? ['KHR_materials_transmission'] : []), ...(name === 'dispersion' ? ['KHR_materials_volume'] : [])];
   asset.materials[0].extensions = { ...Object.fromEntries(keep.map(o => [o, {}])),
     [K]: { bindings: { [name]: { index: 0, output: name } } } };
   asset.extensionsUsed = asset.extensionsUsed.filter(o => o === K || o.startsWith('EXT_') || keep.includes(o));
   return asset;
 }
 for (const [name, descriptor] of extensionChannels) {
-  test(`${name}: owning default object activates binding without other owners`, () => {
+  test(`${name}: owning default object and its dependencies activate binding`, () => {
     const asset = only(name); assert.deepEqual(validate(asset), []);
     assert.equal(overlay(asset), true, JSON.stringify(overlay.errors));
   });
@@ -88,6 +88,30 @@ test('resolved iridescence thickness ignores native interpolation endpoints', ()
 test('attenuation distance excludes zero', () => {
   const asset = only('attenuationDistance'); graph(asset).inputs.attenuationDistance.value = [0];
   assert.ok(validate(asset).some(e => e.includes('outside binding domain')));
+});
+
+function varyingScalar(asset, name) {
+  const g = graph(asset);
+  g.nodes = [
+    { nodetype: 'texcoord', type: 'vector2', inputs: { index: { nodetype: 'input', type: 'integer', value: [0] } }, outputs: { out: { nodetype: 'output', type: 'vector2' } } },
+    { nodetype: 'extract', type: 'float', inputs: { in: { nodetype: 'input', type: 'vector2', node: 0, output: 'out' }, index: { nodetype: 'input', type: 'integer', value: [0] } }, outputs: { out: { nodetype: 'output', type: 'float' } } },
+    { nodetype: 'add', type: 'float', inputs: { in1: { nodetype: 'input', type: 'float', node: 1, output: 'out' }, in2: { nodetype: 'input', type: 'float', value: [1.5] } }, outputs: { out: { nodetype: 'output', type: 'float' } } }
+  ];
+  g.outputs[name] = { nodetype: 'output', type: 'float', node: 2, output: 'out' };
+}
+
+test('dispersion remains uniform in the homogeneous medium', () => {
+  const asset = only('dispersion'); varyingScalar(asset, 'dispersion');
+  assert.ok(validate(asset).some(e => e.includes('requires a uniform output')));
+});
+
+test('IOR may vary on a surface but is uniform when volume is present', () => {
+  const asset = only('ior'); varyingScalar(asset, 'ior');
+  assert.deepEqual(validate(asset), []);
+  asset.materials[0].extensions.KHR_materials_volume = {};
+  asset.materials[0].extensions.KHR_materials_transmission = {};
+  asset.extensionsUsed.push('KHR_materials_volume', 'KHR_materials_transmission');
+  assert.ok(validate(asset).some(e => e.includes('requires a uniform output')));
 });
 for (const name of ['attenuationDistance', 'attenuationColor']) for (const custom of [false, true]) {
   test(`${name}: homogeneous medium rejects ${custom ? 'custom-wrapped' : 'direct'} geometry`, () => {

@@ -241,7 +241,8 @@ export function validate(asset) {
       const port = g?.outputs[b.output];
       if (port) {
         const env = rootEnvironment(g);
-        if (descriptor.uniform && !uniform(port, g, env)) fail(`material/${i}/${name}: homogeneous-medium property requires a uniform output`);
+        const requiresUniform = descriptor.uniform || (descriptor.uniformWhen && Object.hasOwn(m.extensions ?? {}, descriptor.uniformWhen));
+        if (requiresUniform && !uniform(port, g, env)) fail(`material/${i}/${name}: homogeneous-medium property requires a uniform output`);
         const value = literal(port, g, env);
         if (Array.isArray(value)) {
           if (value.some(v => !Number.isFinite(v) || (descriptor.min !== undefined && (descriptor.exclusiveMin ? v <= descriptor.min : v < descriptor.min)) || (descriptor.max !== undefined && v > descriptor.max))) fail(`material/${i}/${name}: value outside binding domain`);
