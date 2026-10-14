@@ -14,7 +14,7 @@ const K = 'KHR_materials_procedural';
 const read = name => JSON.parse(fs.readFileSync(path.join(directory, 'examples', `${name}.gltf`), 'utf8'));
 const root = a => a.extensions[K];
 for (const name of fs.readdirSync(path.join(directory, 'examples')).filter(n => n.endsWith('.gltf'))) test(`schema + semantics: ${name}`, () => assert.deepEqual(validate(read(name.slice(0, -5))), []));
-test('metallic and roughness remain independent scalar outputs', () => {
+test('material channel graph produces typed outputs', () => {
   const g = root(read('independent-channels')).procedurals[0];
   assert.deepEqual(evaluate(g), { metal: [0.15], rough: [0.85] });
 });
@@ -152,7 +152,14 @@ test('tangent frame can be generated with TEXCOORD_0', () => assert.deepEqual(va
 test('missing tangent frame and TEXCOORD_0 is invalid', () => { const a = tangentAsset(); delete a.meshes[0].primitives[0].attributes.TEXCOORD_0; assert.ok(validate(a).some(e => e.includes('tangent-frame'))); });
 test('reject nonzero tangent stream index', () => assert.ok(validate(tangentAsset(1)).some(e => e.includes('invalid geometry index'))));
 test('reject unsupported geometry coordinate space', () => { const a = tangentAsset(); root(a).procedurals[0].nodes[0].inputs.space = literalInput('string','model'); assert.ok(validate(a).some(e => e.includes('invalid space mode'))); });
-test('reject fallback texture index out of range', () => { const a = read('independent-channels'); a.materials[0].pbrMetallicRoughness.baseColorTexture = { index: 100 }; assert.ok(validate(a).some(e => e.includes('fallback'))); });
+test('reject material texture index out of range', () => { const a = read('independent-channels'); a.materials[0].pbrMetallicRoughness.baseColorTexture = { index: 100 }; assert.ok(validate(a).some(e => e.includes('material'))); });
+
+test('optional extension needs no duplicate material representation', () => {
+  const a = read('independent-channels');
+  delete a.extensionsRequired;
+  delete a.materials[0].pbrMetallicRoughness;
+  assert.deepEqual(validate(a), []);
+});
 test('reject out of range codec-extension image source', () => { const a = read('image-resource'); a.extensionsUsed.push('KHR_texture_basisu'); a.textures[0] = { extensions: { KHR_texture_basisu: { source: 100 } } }; assert.ok(validate(a).some(e => e.includes('texture/image'))); });
 
 test('out of range implementation definition returns diagnostics without throwing', () => {

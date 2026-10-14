@@ -12,6 +12,10 @@
     "EXT_materials_procedural_mx_1_39",
     "KHR_animation_pointer"
   ],
+  "extensionsRequired": [
+    "KHR_materials_procedural",
+    "EXT_materials_procedural_mx_1_39"
+  ],
   "extensions": {
     "KHR_materials_procedural": {
       "procedurals": [

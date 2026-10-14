@@ -15,17 +15,19 @@
 
 ## Status
 
-Draft. This revision proposes material-channel bindings and intentionally changes the wire format of the earlier draft in [PR #2381](https://github.com/KhronosGroup/glTF/pull/2381). It is not a ratified extension. See [revision decisions and remaining adoption work](#revision-decisions-and-remaining-adoption-work).
+Draft
 
-## Dependencies and scope
+## Dependencies
 
 Written against glTF 2.0. The key words **MUST**, **MUST NOT**, **REQUIRED**, **SHOULD**, **SHOULD NOT**, and **MAY** are to be interpreted as described in the glTF specification.
 
-This extension represents directed acyclic graphs that compute inputs to glTF's metallic-roughness material model. It is a **material-channel graph**, with access to geometric streams and sampled resources, rather than a replacement for the `images` array. Graph outputs are values, not necessarily stored images. An implementation MAY compile the graph into its material shader, evaluate it at runtime, or bake it when that preserves the graph's specified behavior, including geometric dependencies and animation.
+## Overview
 
-This extension does not replace the glTF BRDF. It does not carry BSDFs, EDFs, closures, surface shaders, displacement shaders, renderer-specific shader source, or arbitrary executable code. Core material inputs and the base color/opacity inputs of `KHR_materials_unlit` are covered. Graph binding to inputs introduced by other material extensions requires a separate specification; those extensions retain their ordinary behavior for unbound inputs. The final-emissive rule below explicitly handles the interaction with `KHR_materials_emissive_strength` without adding a separate binding for its strength input.
+This extension defines procedural graphs that compute glTF material inputs from constants, geometric streams, and sampled resources. Graphs use MaterialX-compatible nodes to describe patterns and material-channel calculations without storing each result as a bitmap. The existing glTF material model determines shading. Implementations MAY compile graphs into material shaders or evaluate them by another method that preserves their behavior.
 
-The graph structure is independent of a particular library. This revision defines one interoperable library profile, [EXT_materials_procedural_mx_1_39](../../Vendor/EXT_materials_procedural_mx_1_39/README.md). Assets using this revision **MUST** declare that profile. Future profiles require a separate extension defining their semantics; they are not implied by arbitrary node names. MaterialX compatibility is a design requirement, with a deliberately restricted subset of MaterialX and explicit glTF resource and channel mappings.
+Graphs supply the core metallic-roughness inputs and the base color/opacity inputs of `KHR_materials_unlit`. BSDFs, EDFs, closures, surface/displacement shaders and executable source are excluded. Binding to inputs introduced by other material extensions requires a separate specification. The emissive rule below defines the interaction with `KHR_materials_emissive_strength`.
+
+Node definitions use the [EXT_materials_procedural_mx_1_39](../../Vendor/EXT_materials_procedural_mx_1_39/README.md) MaterialX library profile.
 
 ## Declaration
 
@@ -35,8 +37,8 @@ An asset using procedural graphs **MUST** list both `KHR_materials_procedural` a
 {
   "asset": { "version": "2.0" },
   "extensionsUsed": ["KHR_materials_procedural", "EXT_materials_procedural_mx_1_39"],
+  "extensionsRequired": ["KHR_materials_procedural", "EXT_materials_procedural_mx_1_39"],
   "materials": [{
-    "pbrMetallicRoughness": { "roughnessFactor": 0.8 },
     "extensions": {
       "KHR_materials_procedural": {
         "bindings": { "roughness": { "index": 0, "output": "roughness" } }
@@ -57,11 +59,11 @@ An asset using procedural graphs **MUST** list both `KHR_materials_procedural` a
 }
 ```
 
-For extension-aware rendering this material's roughness is `0.25`, not `0.25 * 0.8`. An extension-unaware client renders the standard fallback roughness `0.8`.
+### Required extension usage
 
-When an author requires procedural rendering, both identifiers **MUST** also appear in `extensionsRequired`. Requiring just one is invalid. A client unable to implement either required extension **MUST** reject the asset as specified by glTF. If procedural support is optional, a client unable to evaluate any reachable bound graph **MUST** use the complete standard fallback for that material, rather than mixing successful procedural channels with fallback channels. Different materials MAY independently fall back. Unsupported reachable resources or operators trigger the same policy. Structural and semantic invalidity remains invalidity, not an alternative valid encoding.
+Assets that rely on procedural materials **MUST** list both identifiers in `extensionsRequired` as well as `extensionsUsed`. Clients that do not support a required extension cannot load the asset.
 
-Standard material factors and textures are the fallback. Textures are optional; a material using only factors is valid. When present, fallback textures **MUST** satisfy core glTF requirements, including valid `textureInfo.index` references. A dummy bitmap is neither required nor an appearance-equivalent fallback. Authors **SHOULD** provide an appropriate baked or constant fallback when this extension is optional. A fallback cannot represent every animated or geometry-dependent procedural exactly.
+When the extension is optional, clients that do not support it ignore its objects and use the standard glTF material definition. Authors MAY include standard factors or textures for that use, but no additional material or bitmap representation is required by this extension.
 
 ## Material-channel binding
 
@@ -77,10 +79,7 @@ flowchart LR
   R --> V
   C --> V
   V --> P[Existing glTF material BRDF]
-  F[Standard factors and textures] -. unsupported optional material .-> V
 ```
-
-This diagram is informative. Procedural and complete fallback channel sets are selected according to the per-material policy; the dotted path does not add fallback multipliers to bound procedural values.
 
 | Binding | Required output type | Value supplied to the material |
 | --- | --- | --- |
@@ -92,19 +91,17 @@ This diagram is informative. Procedural and complete fallback channel sets are s
 | `occlusion` | `float` | Final indirect-light occlusion multiplier, clamped to [0, 1] |
 | `emissive` | `color3` | Linear Rec.709 emitted radiance, each component clamped to at least zero |
 
-A binding replaces the complete conventional calculation of that channel. The implementation **MUST NOT** additionally multiply a bound channel by its core factor, sample its fallback texture, or apply a fallback texture transform. In particular:
+A binding replaces the complete conventional calculation of that channel. The implementation **MUST NOT** additionally multiply a bound channel by its core factor, sample its conventional texture, or apply its texture transform. In particular:
 
 - Bound `baseColor` replaces RGB from `baseColorFactor`, `baseColorTexture`, and the automatic `COLOR_0` RGB multiplier. Bound `opacity` separately replaces alpha from those sources and the automatic vertex alpha multiplier. To include vertex colors, authors explicitly use a geometric color node in the graph. When only one of RGB/alpha is bound, the other retains its standard calculation.
-- Bound `metallic` and `roughness` independently replace their factors and their respective texture samples. They are **independent scalar outputs**. Graphs **MUST NOT** be required to pack them into a tuple or image. An implementation MAY pack intermediate values as an internal optimization without changing semantics.
-- Bound `normal` is already a signed world-space shading normal, not an RGB-encoded bitmap value. `normalTexture.scale` is not applied. The material's ordinary double-sided back-face normal reversal is applied after graph evaluation. A zero-length result is an evaluation error and triggers the required/optional policy. Authors converting a tangent-space bitmap normal must decode it and transform through an explicit tangent frame in the graph, or use the profile's MaterialX `normalmap` node, whose output is world-space. Core glTF normal handling remains unchanged when this channel is unbound.
+- Bound `metallic` and `roughness` replace their respective factors and texture samples.
+- Bound `normal` is already a signed world-space shading normal, not an RGB-encoded bitmap value. `normalTexture.scale` is not applied. The material's ordinary double-sided back-face normal reversal is applied after graph evaluation. A zero-length result is invalid. Authors converting a tangent-space bitmap normal must decode it and transform through an explicit tangent frame in the graph, or use the profile's MaterialX `normalmap` node, whose output is world-space. Core glTF normal handling remains unchanged when this channel is unbound.
 - Bound `occlusion` already incorporates any desired strength; `occlusionTexture.strength` is not applied.
 - Bound `emissive` replaces `emissiveFactor` and `emissiveTexture`. If `KHR_materials_emissive_strength` is present, its strength is also included in the graph's final radiance and **MUST NOT** be applied again to that bound channel.
 
 For unbound channels, all ordinary glTF calculations continue to apply. `alphaMode`, `alphaCutoff`, and `doubleSided` remain material properties and are not graph inputs. This version does not bind the discrete choice of a material model. On an unlit material, only `baseColor` and `opacity` bindings are valid. Unknown channel names are invalid, rather than ignored aliases.
 
-The core [`metallicRoughnessTexture`](../../../../specification/2.0/Specification.adoc#materials) uses G for roughness and B for metallic. That storage rule still applies to ordinary and fallback textures. It does not constrain this extension's scalar graph outputs. Imported MaterialX graphs can connect metallic and roughness separately without inserting a combine node. If the graph itself samples an ORM bitmap, explicit extract/swizzle nodes select the desired channels.
-
-There are **no** procedural payloads on `textureInfo`, `textures`, or `images` in this revision. This removes the previous draft's dependence on an artificial texture-info entry for every procedural channel.
+The extension object is permitted only on the root glTF object and materials.
 
 ## Types and values
 
@@ -124,7 +121,7 @@ Ports are typed. Connected ports **MUST** have exactly matching types; conversio
 
 Converters **MUST** preserve matrix mathematical values when converting between this row-major representation, MaterialX matrix types, and host-language matrices. The profile maps `matrix3x3`/`matrix4x4` to MaterialX `matrix33`/`matrix44`. Integer vector types are available to future profiles or custom functional definitions; their existence here does not introduce unsupported atomic overloads into MaterialX 1.39.
 
-Legacy arrays of named port objects, scalar JSON numbers, integer port selectors, and the earlier matrix type spellings are not valid encodings of this revision. Input and output sets are JSON objects keyed by nonempty, case-sensitive port names. Duplicate JSON keys are invalid; parsers **MUST NOT** use last-key-wins behavior to accept them. Numeric indices are zero-based and refer to the relevant array, not a port map.
+Input and output sets are JSON objects keyed by nonempty, case-sensitive port names. Duplicate JSON keys are invalid; parsers **MUST NOT** use last-key-wins behavior to accept them. Numeric indices are zero-based and refer to the relevant array, not a port map.
 
 ## Graph structure and connections
 
@@ -152,7 +149,7 @@ Node output descriptors contain `nodetype: "output"` and a port type. Graph outp
 
 ```json
 {
-  "name": "IndependentChannels",
+  "name": "SurfaceParameters",
   "nodetype": "nodegraph",
   "type": "multioutput",
   "inputs": {
@@ -173,13 +170,13 @@ Unknown structural properties are invalid. `extras` and `extensions` retain thei
 
 A filename port's `texture` source indexes glTF's `textures` array. The selected texture resolves its source image through ordinary glTF image and codec extension rules, including external `uri`, data URI, and `bufferView` resources. The texture/image indices **MUST** be valid and all required image extensions **MUST** be supported. MaterialX importers map filename references to glTF resources; exporters reconstruct a filename or resolver handle from those resources. Arbitrary filename strings or external node-definition libraries are not loaded by this extension.
 
-Image nodes own sampling behavior through their MaterialX inputs/defaults. For procedural evaluation the implementation **MUST NOT** apply a fallback texture-info's `texCoord`, `KHR_texture_transform`, or a referenced glTF texture's `sampler`. Default filters and address modes are those of the selected MaterialX definition; explicit image/place2d/geometry nodes supply overrides. Profile image coordinates follow glTF: (0, 0) addresses the top-left of an image. MaterialX import/export converters **MUST** compensate for differing authoring image-coordinate conventions at the conversion boundary, preserving appearance rather than assuming identical UV orientation. Fallback rendering continues to apply ordinary glTF sampling rules. Implementations can share decoded image data but must preserve per-node sampling behavior. Image sequences are not supported: `framerange` **MUST** be empty, and frame offset/end-action inputs cannot select resources outside the bound glTF image.
+Image nodes own sampling behavior through their MaterialX inputs/defaults. For procedural evaluation the implementation **MUST NOT** apply a material texture-info's `texCoord`, `KHR_texture_transform`, or a referenced glTF texture's `sampler`. Default filters and address modes are those of the selected MaterialX definition; explicit image/place2d/geometry nodes supply overrides. Profile image coordinates follow glTF: (0, 0) addresses the top-left of an image. MaterialX import/export converters **MUST** compensate for differing authoring image-coordinate conventions at the conversion boundary, preserving appearance rather than assuming identical UV orientation. Ordinary material textures retain glTF sampling rules. Implementations can share decoded image data but must preserve per-node sampling behavior. Image sequences are not supported: `framerange` **MUST** be empty, and frame offset/end-action inputs cannot select resources outside the bound glTF image.
 
 For `image`/equivalent resource nodes returning `color3` or `color4`, image RGB is treated as sRGB and decoded to linear Rec.709 before graph arithmetic; alpha remains linear. For scalar/vector image outputs, the resource is linear data without sRGB decoding. Graph authors **MUST** select the overload that matches the resource's role. Reusing one image as color and data requires distinct evaluations with the appropriate interpretation. This restriction is the glTF interoperability profile, rather than support for arbitrary MaterialX color spaces. Color-transform nodes that require another color space are outside this profile.
 
 Geometry nodes with a numbered stream index bind to the corresponding glTF attribute: `texcoord` index n to `TEXCOORD_n`, and `geomcolor` index n to `COLOR_n`. Indices **MUST** be nonnegative uniform integers and need not be sequential. Only the `texcoord` vector2 overload is supported; VEC3 texture-coordinate streams are not introduced here. `geomcolor` color3/color4 overloads select the corresponding RGB or RGBA values; the scalar overload is excluded. To obtain vectors, use an explicit color-to-vector conversion node. COLOR_0/COLOR_n RGB is linear and absent alpha means one. A requested missing stream is a semantic error on every affected primitive.
 
-Geometry nodes read the interpolated geometry after morphing and skinning, before procedural shading-normal perturbation. In particular the geometric `normal` node does not read this material's bound procedural normal, avoiding an implicit evaluation cycle. `position`, `normal`, `tangent`, and `bitangent` support only `object` and `world` spaces; position units are metres. World-space inputs include the current instance transform. Normals use inverse-transpose transformation and normalization. If NORMAL is absent, triangle primitives use the flat normals required by core glTF; supplied tangents must then be ignored as in core glTF. Tangents and bitangents use glTF's tangent handedness. `tangent`/`bitangent` index **MUST** be zero because glTF defines only one TANGENT stream. When an explicit geometric tangent/bitangent node needs a frame and no usable TANGENT stream is present, the implementation **MUST** generate the frame with MikkTSpace using TEXCOORD_0, or diagnose unsupported evaluation and apply the required/optional policy. Missing TEXCOORD_0 in that case is invalid; converters may instead provide NORMAL and TANGENT streams. A `normalmap` with explicitly supplied literal/frame-vector inputs does not imply an additional stream lookup. Missing normals on nontriangle topology cannot be generated by this rule and require a supplied normal or a diagnosed unsupported evaluation. Implementations **MUST** evaluate shared graphs in the current primitive/instance context rather than cache geometry-dependent results globally.
+Geometry nodes read the interpolated geometry after morphing and skinning, before procedural shading-normal perturbation. In particular the geometric `normal` node does not read this material's bound procedural normal, avoiding an implicit evaluation cycle. `position`, `normal`, `tangent`, and `bitangent` support only `object` and `world` spaces; position units are metres. World-space inputs include the current instance transform. Normals use inverse-transpose transformation and normalization. If NORMAL is absent, triangle primitives use the flat normals required by core glTF; supplied tangents must then be ignored as in core glTF. Tangents and bitangents use glTF's tangent handedness. `tangent`/`bitangent` index **MUST** be zero because glTF defines only one TANGENT stream. When an explicit geometric tangent/bitangent node needs a frame and no usable TANGENT stream is present, the implementation **MUST** generate the frame with MikkTSpace using TEXCOORD_0, or report unsupported graph evaluation. Missing TEXCOORD_0 in that case is invalid; converters may instead provide NORMAL and TANGENT streams. A `normalmap` with explicitly supplied literal/frame-vector inputs does not imply an additional stream lookup. Missing normals on nontriangle topology cannot be generated by this rule and require a supplied normal or a diagnosed unsupported evaluation. Implementations **MUST** evaluate shared graphs in the current primitive/instance context rather than cache geometry-dependent results globally.
 
 Name-based arbitrary geometric properties are outside the profile. The MaterialX companion specifies permitted geometry nodes and supported coordinate spaces.
 
@@ -223,25 +220,9 @@ This fragment is an animation channel's `target`; a complete asset with accessor
 
 Schemas in [schema/](schema/) describe root payloads, material bindings, typed ports and functional definitions. [glTF.KHR_materials_procedural.schema.json](schema/glTF.KHR_materials_procedural.schema.json) validates the root payload and [material.KHR_materials_procedural.schema.json](schema/material.KHR_materials_procedural.schema.json) validates a material payload. The [whole-document overlay](schema/material.KHR_materials_procedural_schema.json) additionally enforces extension declaration requirements. Validate core glTF structure with the core schemas as well; extension schemas do not substitute for core validation. The companion declaration schema is applied to the document, not to a nonexistent companion payload.
 
-Schema validation alone cannot verify array index bounds, DAG acyclicity, custom-definition recursion, resolved port types, node-library overloads/defaults, primitive attributes, runtime value ranges, sampling behavior, or rendered equivalence. A conformant implementation **MUST** validate these semantic requirements as well. Runtime results must be finite; invalid results are evaluation errors subject to the declared required/fallback policy. Geometry/resource checks are performed in every bound primitive context. Unsupported valid operators are distinct from invalid signatures.
+Schema validation alone cannot verify array index bounds, DAG acyclicity, custom-definition recursion, resolved port types, node-library overloads/defaults, primitive attributes, runtime value ranges, sampling behavior, or rendered equivalence. A conformant implementation **MUST** validate these semantic requirements as well. Runtime results must be finite; invalid results are evaluation errors. Geometry/resource checks are performed in every bound primitive context. Unsupported valid operators are distinct from invalid signatures.
 
 Runnable examples and Node-based structural/semantic checks are provided in this directory. See [the validation guide](tests/README.md) for commands and the scope of the reference evaluator. Examples include separate metallic/roughness outputs, checkerboard math, shared outputs, custom definitions, image resources, and animated interface values. Reference numeric results exercise selected elementary operators; they are not evidence of full MaterialX or GPU rendering conformance.
-
-## Revision decisions and remaining adoption work
-
-This revision resolves the local design choices as follows:
-
-1. Graphs bind directly to named material channels. Earlier procedural texture-info bindings are replaced, not retained as a second competing format.
-2. Graph results are final channel values. Conventional factors, fallback textures, and automatic vertex-color multipliers for those channels are not applied again. This prevents accidental double application; desired multipliers belong in the graph.
-3. Metallic and roughness are independent scalar outputs. Packing is only an implementation optimization or a standard fallback bitmap representation.
-4. The initial library is a pinned MaterialX 1.39.0 subset; custom definitions are functional graphs. Closure/shader nodes and deployment-specific code are excluded.
-5. Named port maps, required named output selectors, typed numeric arrays, resource-index filename binding, explicit geometry, and strict DAG/type rules replace the inconsistent earlier examples/schemas.
-6. Color inputs use a fixed glTF-compatible interpretation; units and defaults are explicit. Normal results are world-space, matching the MaterialX normal-map operation. Root-interface float/vector/color animation is defined; other types remain immutable in this version.
-7. Optional unsupported graphs fall back atomically per material. Fallbacks can be ordinary factors without synthetic textures.
-
-These are proposed decisions for review, not a statement of working-group consensus. The wire-format migration and final-value channel semantics require exporter/runtime updates. Old diagrams in `figures/` are historical illustrations from the original proposal and are not normative for this revised binding format. The schemas and examples in this revision describe the current format.
-
-Before ratification, the working group still needs to approve this scope/profile, review the normative channel/resource/default/animation rules, provide independent runtime implementations and operator/rendering reference results, and complete its extension/adopter process. Contributor CLA requirements also remain external to this patch. A documentation/schema PR cannot itself establish Khronos ratification, performance, renderer interoperability, or GPU conformance.
 
 ## Normative references
 

@@ -15,11 +15,15 @@
 
 ## Status
 
-Draft. This is the MaterialX profile for the revised [KHR_materials_procedural](../../Khronos/KHR_materials_procedural/README.md) material-channel graph format. It is not a declaration that the complete MaterialX ecosystem or a new material model is supported.
+Draft
 
 ## Dependencies
 
 Written against glTF 2.0 and `KHR_materials_procedural`. Normative node definitions and semantics are pinned to [MaterialX v1.39.0](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0), commit `f679db7875a928fd0162cd38bdc7461b2aa81c0f`. A later patch release MUST NOT silently change the semantics of this profile. A future incompatible profile requires a new extension identifier.
+
+## Overview
+
+This extension selects the MaterialX 1.39 node-library profile for [KHR_materials_procedural](../../Khronos/KHR_materials_procedural/README.md) graphs. Pattern and data-processing nodes supply inputs to the glTF material model.
 
 ## Declaration
 
@@ -74,7 +78,7 @@ An atomic definition is in this profile only if all its input/output types can b
 - No alternate color-space requirement. Constants and computed colors are linear Rec.709; image color/data interpretation is the base extension's fixed glTF profile. Definitions requiring other color transforms are excluded.
 - Geometric defaults such as `defaultgeomprop` must be expanded into explicit geometry node connections. Supported ordinary literal defaults and standard string mode/enum values retain MaterialX semantics. Uniform inputs MUST remain uniform through connections; string mode and stream-index inputs cannot be driven by surface-varying data. Image sequences are excluded (`framerange` MUST be empty). Custom enumeration declarations, target metadata, node disabling and output pass-through defaults are not transferred.
 
-Definitions using supported float, color, vector, integer, boolean, string, filename, or matrix types otherwise retain their MaterialX operation, port names, literal defaults, overloads, and functional logic. The profile is not limited to a small noise/operator list. It is bounded by interoperability restrictions rather than a particular renderer's current supported subset. An implementation that does not support a reachable valid profile node MUST apply the base extension's optional/required policy; it MUST NOT approximate an unrelated operation silently. Full conformance requires testing all claimed operations, not merely parsing node names.
+Definitions using supported types retain their MaterialX operation, port names, literal defaults, overloads, and functional logic. Unsupported nodes are handled according to the base extension's required-extension rules.
 
 Overload selection uses `nodetype`, declared input types, and the complete declared output name/type set. There MUST be exactly one matching definition after applying the restrictions. Required port values and supported default values come from that definition. Standard node `version` resolution uses the default definition of the pinned release; assets cannot select an arbitrary later node version. If selection is ambiguous or a declared input/output is not in the selected definition, the graph is invalid. Custom definitions are selected explicitly by the base extension's `nodedef` index and MUST NOT shadow a standard node category.
 
@@ -93,17 +97,15 @@ Nested authoring graphs must be flattened. Renderer source/closure nodes cannot 
 
 ### glTF PBR inputs
 
-An authoring MaterialX `gltf_pbr` surface is a conversion endpoint, not a replacement BRDF serialized in the asset. Convert its supported input graphs into the base extension's named channels. The resulting glTF material retains its standard metallic-roughness shading model or `KHR_materials_unlit` shading model, as appropriate. The base extension supplies the exact final-value, color, alpha, normal, factor and fallback rules.
+An authoring MaterialX `gltf_pbr` surface is a conversion endpoint, not a replacement BRDF serialized in the asset. Convert its supported input graphs into the base extension's named channels. The resulting glTF material retains its standard metallic-roughness shading model or `KHR_materials_unlit` shading model, as appropriate. The base extension supplies the channel value, color, alpha, normal and factor rules.
 
-Metallic and roughness **MUST** remain independent scalar bindings. They need not originate from the same graph. A converter MUST NOT require a combine node simply to recreate `metallicRoughnessTexture` channel packing. Sampling an existing ORM resource can still use explicit extract nodes, while an optional baked fallback uses ordinary glTF packing.
-
-MaterialX surface-model translations that can be expressed as valid pattern graphs into the supported glTF channels MAY be converted. Importing an arbitrary MaterialX surface shader unchanged, custom BRDF parameters, displacement, or extension-defined material inputs is outside this revision. Conversion to glTF may therefore be an explicitly documented approximation of a source surface model, distinct from exact preservation of the transferred pattern graphs.
+MaterialX surface-model translations that can be expressed as valid pattern graphs into the supported glTF channels MAY be converted. Importing an arbitrary MaterialX surface shader unchanged, custom BRDF parameters, displacement, or extension-defined material inputs is outside this profile. Conversion to glTF may therefore be an explicitly documented approximation of a source surface model, distinct from exact preservation of the transferred pattern graphs.
 
 ## Validation and examples
 
 The [document declaration schema](schema/material.EXT_materials_procedural_mx_1_39_schema.json) validates the required paired identifiers; it is not a schema for a companion payload or proof of node execution semantics. Use the base extension schemas, core glTF schemas and semantic checks as well.
 
-Examples and validation tools are shared with the base extension: [examples](../../Khronos/KHR_materials_procedural/examples/) and [validation guide](../../Khronos/KHR_materials_procedural/tests/README.md). This avoids maintaining a second example with obsolete port-array syntax. Reference numeric fixtures exercise a subset of elementary operations, not full rendering conformance. Independent runtimes and reference renders remain adoption work.
+Examples and validation tools are shared with the base extension: [examples](../../Khronos/KHR_materials_procedural/examples/) and [validation guide](../../Khronos/KHR_materials_procedural/tests/README.md). 
 
 ## References
 

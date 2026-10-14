@@ -86,16 +86,16 @@ export function validate(asset) {
     }
     if (!sources.length || sources.some(source => !asset.images?.[source])) fail(`${context}: invalid texture/image resource`);
   }
-  function fallbackCheck(value) {
+  function materialTextureCheck(value) {
     if (!value || typeof value !== 'object') return;
     for (const [name, child] of Object.entries(value)) {
       if (name === 'extras' || name === KHR) continue;
-      if (name === 'extensions') { for (const [id, payload] of Object.entries(child ?? {})) if (id.startsWith('KHR_materials_')) fallbackCheck(payload); }
-      else if (name.endsWith('Texture') && child && typeof child === 'object' && 'index' in child) textureCheck(child.index, `fallback/${name}`);
-      else if (name !== KHR) fallbackCheck(child);
+      if (name === 'extensions') { for (const [id, payload] of Object.entries(child ?? {})) if (id.startsWith('KHR_materials_')) materialTextureCheck(payload); }
+      else if (name.endsWith('Texture') && child && typeof child === 'object' && 'index' in child) textureCheck(child.index, `material/${name}`);
+      else if (name !== KHR) materialTextureCheck(child);
     }
   }
-  (asset.materials ?? []).forEach(fallbackCheck);
+  (asset.materials ?? []).forEach(materialTextureCheck);
   const rootEnvironment = g => Object.fromEntries(Object.entries(g.inputs ?? {}).map(([name, p]) => [name, { p, g, env: {} }]));
   const customEnvironment = (n, g, env) => Object.fromEntries(Object.entries(defs[n.nodedef]?.inputs ?? {}).map(([name, p]) => [name, { p: n.inputs?.[name] ?? p, g, env }]));
   function literal(p, g, env, seen = new Set()) {

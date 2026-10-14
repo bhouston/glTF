@@ -15,7 +15,7 @@ const atomic = (nodetype, type, inputs) => ({ nodetype, type, inputs, outputs: {
 const graph = (nodes, outputs, inputs = {}) => ({ nodetype: 'nodegraph', type: Object.keys(outputs).length === 1 ? Object.values(outputs)[0].type : 'multioutput', inputs, nodes, outputs });
 const scalar = x => atomic('constant', 'float', { value: val('float', [x]) });
 function asset(g, bindings) {
-  return { asset: { version: '2.0', generator: 'KHR_materials_procedural fixtures' }, extensionsUsed: [K, M], extensions: { [K]: { procedurals: [g] } }, materials: [{ pbrMetallicRoughness: { baseColorFactor: [0.5, 0.5, 0.5, 1], metallicFactor: 0.2, roughnessFactor: 0.8 }, extensions: { [K]: { bindings } } }] };
+  return { asset: { version: '2.0', generator: 'KHR_materials_procedural fixtures' }, extensionsUsed: [K, M], extensionsRequired: [K, M], extensions: { [K]: { procedurals: [g] } }, materials: [{ pbrMetallicRoughness: { baseColorFactor: [0.5, 0.5, 0.5, 1], metallicFactor: 0.2, roughnessFactor: 0.8 }, extensions: { [K]: { bindings } } }] };
 }
 const binding = output => ({ index: 0, output });
 function save(name, a) {

@@ -37,7 +37,8 @@ that the graph is normatively invalid. General runtime mode/range and finite
 result checks require execution in addition to the checks provided here.
 Other validators must also enforce the complete specification.
 
-Core fallback materials are independently valid, with no dummy textures.
+Examples declare required procedural support. Optional use follows standard
+glTF extension rules and does not require duplicate textures or materials.
 The checkerboard and image fixtures use explicit TEXCOORD_0 nodes; the
 checkerboard multiplies UV by eight before calculating parity. The embedded
 PNG is generated deterministically and tested for chunk CRCs and pixel data.
