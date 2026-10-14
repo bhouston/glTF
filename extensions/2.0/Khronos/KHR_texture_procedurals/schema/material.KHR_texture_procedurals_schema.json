@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$comment": "Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: Apache-2.0",
   "title": "KHR_texture_procedurals whole-document overlay",
-  "description": "Apply alongside the core glTF 2.0 schema. Semantic reference, library signature, graph type, and cycle validation is also required.",
+  "description": "Apply alongside the core glTF 2.0 schema. Semantic reference, library signature, graph type, and cycle validation is also required. Required identifiers must also be a subset of extensionsUsed; this cross-array constraint is validated semantically.",
   "type": "object",
   "properties": {
     "extensionsUsed": {
@@ -39,7 +39,19 @@
     "extensionsRequired": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "not": {
+          "allOf": [
+            {
+              "pattern": "^EXT_texture_procedurals_mx_"
+            },
+            {
+              "not": {
+                "const": "EXT_texture_procedurals_mx_1_39"
+              }
+            }
+          ]
+        }
       },
       "uniqueItems": true,
       "allOf": [
@@ -318,5 +330,46 @@
   "required": [
     "extensionsUsed",
     "extensions"
+  ],
+  "definitions": {
+    "noCompanionPayload": {
+      "if": {
+        "type": "object"
+      },
+      "then": {
+        "properties": {
+          "extensions": {
+            "if": {
+              "type": "object"
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "EXT_texture_procedurals_mx_1_39"
+                ]
+              }
+            }
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/definitions/noCompanionPayload"
+        }
+      },
+      "else": {
+        "if": {
+          "type": "array"
+        },
+        "then": {
+          "items": {
+            "$ref": "#/definitions/noCompanionPayload"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/definitions/noCompanionPayload"
+    }
   ]
 }
