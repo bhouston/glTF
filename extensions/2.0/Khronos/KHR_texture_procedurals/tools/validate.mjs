@@ -2,31 +2,57 @@
 // SPDX-License-Identifier: Apache-2.0
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import Ajv from 'ajv';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { visit } from 'jsonc-parser';
 export const directory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const KHR = 'KHR_texture_procedurals', MX = 'EXT_texture_procedurals_mx_1_39';
 const channels = { baseColor: 'color3', metallic: 'float', roughness: 'float', opacity: 'float', normal: 'vector3', occlusion: 'float', emissive: 'color3' };
+const library = JSON.parse(fs.readFileSync(path.join(directory, 'tools/materialx-library.json'), 'utf8'));
+const geometry = new Set(['texcoord', 'geomcolor', 'position', 'normal', 'tangent', 'bitangent']);
+const spatial = new Set([...geometry, 'image', 'tiledimage', 'triplanarprojection']);
 function schemaValidator(ctor, dir, entry) {
-  const ajv = new ctor({ strict: false, allErrors: true });
+  const ajv = new ctor({ strict: false, strictNumbers: true, allErrors: true });
   addFormats(ajv);
   // The core schema uses IRI references; resource resolution is outside this tool.
   ajv.addFormat('iri-reference', true);
-  for (const name of fs.readdirSync(dir).filter(n => n.endsWith('.json'))) {
-    const schema = JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8'));
-    ajv.addSchema(schema, name);
+  const dirs = [dir];
+  if (dir.includes('EXT_texture_procedurals_mx_1_39')) dirs.push(path.join(directory, 'schema'));
+  for (const schemaDir of dirs) for (const name of fs.readdirSync(schemaDir).filter(n => n.endsWith('.json'))) {
+    const schema = JSON.parse(fs.readFileSync(path.join(schemaDir, name), 'utf8'));
+    const uri = pathToFileURL(path.join(schemaDir, name)).href;
+    schema.$id = uri;
+    ajv.addSchema(schema, uri);
   }
-  return ajv.getSchema(entry);
+  return ajv.getSchema(pathToFileURL(path.join(dir, entry)).href);
 }
 let validators;
+export function parseAsset(text) {
+  const errors = [], objects = [];
+  visit(text, {
+    onObjectBegin: () => objects.push(new Set()),
+    onObjectProperty: name => { const names = objects.at(-1); if (names.has(name)) errors.push(`Duplicate JSON property: ${name}`); names.add(name); },
+    onObjectEnd: () => objects.pop(),
+    onLiteralValue: value => { if (typeof value === 'number' && !Number.isFinite(value)) errors.push('Nonfinite JSON number'); },
+    onError: error => errors.push(`Invalid JSON: ${error}`)
+  }, { disallowComments: true, allowTrailingComma: false });
+  if (errors.length) throw new Error(errors.join('; '));
+  return JSON.parse(text);
+}
 export function validate(asset) {
-  validators ??= [schemaValidator(Ajv2020, path.resolve(directory, '../../../../specification/2.0/schema'), 'glTF.schema.json'), schemaValidator(Ajv, path.join(directory, 'schema'), 'material.KHR_texture_procedurals_schema.json')];
+  validators ??= [schemaValidator(Ajv2020, path.resolve(directory, '../../../../specification/2.0/schema'), 'glTF.schema.json'), schemaValidator(Ajv, path.join(directory, 'schema'), 'material.KHR_texture_procedurals_schema.json'), schemaValidator(Ajv, path.resolve(directory, '../../Vendor/EXT_texture_procedurals_mx_1_39/schema'), 'material.EXT_texture_procedurals_mx_1_39_schema.json')];
   const errors = [];
   for (const check of validators) if (!check(asset)) errors.push(...check.errors.map(e => `${e.instancePath}: ${e.message}`));
   if (errors.length) return errors;
   const fail = message => errors.push(message);
+  function checkLocations(value, location = []) {
+    if (!value || typeof value !== 'object') return;
+    if (!Array.isArray(value) && value.extensions?.[KHR] && !(location.length === 0 || (location.length === 2 && location[0] === 'materials' && Number.isInteger(location[1])))) fail(`Procedural payload at invalid location /${location.join('/')}`);
+    for (const [key, child] of Object.entries(value)) checkLocations(child, [...location, Array.isArray(value) ? Number(key) : key]);
+  }
+  checkLocations(asset);
   const root = asset.extensions?.[KHR];
   if (!root) return errors;
   const used = asset.extensionsUsed ?? [], required = asset.extensionsRequired ?? [];
@@ -43,15 +69,75 @@ export function validate(asset) {
       implementations.set(d.nodedef, d);
     }
   });
-  const standard = new Set(['constant', 'add', 'subtract', 'multiply', 'divide', 'floor', 'modulo', 'mix', 'extract', 'texcoord', 'geomcolor', 'image']);
+  const standard = new Set(library.definitions.map(d => d.node));
+  const customDefaults = new Set();
+  defs.forEach(d => { if (d.nodetype === 'nodedef' && d.defaultVersion) { if (customDefaults.has(d.node)) fail(`Multiple default versions for ${d.node}`); customDefaults.add(d.node); } });
   defs.forEach((d, i) => { if (d.nodetype === 'nodedef') { if (!implementations.has(i)) fail(`Definition ${i}: missing implementation`); if (standard.has(d.node)) fail('Custom definition overrides standard operator'); } });
   const dependencies = defs.map(() => []);
+  const selected = new WeakMap();
+  function textureCheck(index, context) {
+    const texture = asset.textures?.[index];
+    if (!texture) { fail(`${context}: invalid texture index`); return; }
+    const sources = [];
+    if (texture.source !== undefined) sources.push(texture.source);
+    for (const codec of ['KHR_texture_basisu', 'EXT_texture_webp', 'EXT_texture_avif']) if (texture.extensions?.[codec]) {
+      if (!used.includes(codec)) fail(`${context}: codec extension not declared`);
+      sources.push(texture.extensions[codec].source);
+    }
+    if (!sources.length || sources.some(source => !asset.images?.[source])) fail(`${context}: invalid texture/image resource`);
+  }
+  function fallbackCheck(value) {
+    if (!value || typeof value !== 'object') return;
+    for (const [name, child] of Object.entries(value)) {
+      if (name === 'extras' || name === KHR) continue;
+      if (name === 'extensions') { for (const [id, payload] of Object.entries(child ?? {})) if (id.startsWith('KHR_materials_')) fallbackCheck(payload); }
+      else if (name.endsWith('Texture') && child && typeof child === 'object' && 'index' in child) textureCheck(child.index, `fallback/${name}`);
+      else if (name !== KHR) fallbackCheck(child);
+    }
+  }
+  (asset.materials ?? []).forEach(fallbackCheck);
+  const rootEnvironment = g => Object.fromEntries(Object.entries(g.inputs ?? {}).map(([name, p]) => [name, { p, g, env: {} }]));
+  const customEnvironment = (n, g, env) => Object.fromEntries(Object.entries(defs[n.nodedef]?.inputs ?? {}).map(([name, p]) => [name, { p: n.inputs?.[name] ?? p, g, env }]));
+  function literal(p, g, env, seen = new Set()) {
+    if (!p) return undefined;
+    if ('value' in p) return p.value;
+    if ('input' in p) { const c = env[p.input]; return c ? literal(c.p, c.g, c.env, seen) : undefined; }
+    if ('node' in p) {
+      const n = g.nodes[p.node]; if (!n || seen.has(n)) return undefined;
+      const next = new Set(seen).add(n);
+      if (n.nodetype === 'constant') return literal(n.inputs?.value ?? { value: selected.get(n)?.inputs.value?.default }, g, env, next);
+      if (n.nodedef !== undefined) { const impl = implementations.get(n.nodedef); return impl ? literal(impl.outputs[p.output], impl, customEnvironment(n, g, env), next) : undefined; }
+      const values = Object.fromEntries(Object.entries(n.inputs ?? {}).map(([name, input]) => [name, literal(input, g, env, next)]));
+      if (['add', 'subtract', 'multiply', 'divide', 'modulo'].includes(n.nodetype) && Array.isArray(values.in1) && Array.isArray(values.in2)) return values.in1.map((v,i) => ({ add: () => v + values.in2[i], subtract: () => v - values.in2[i], multiply: () => v * values.in2[i], divide: () => v / values.in2[i], modulo: () => v - values.in2[i] * Math.floor(v / values.in2[i]) })[n.nodetype]());
+      if (n.nodetype === 'floor' && Array.isArray(values.in)) return values.in.map(Math.floor);
+      if (n.nodetype === 'convert' && Array.isArray(values.in)) return n.type === 'integer' ? values.in.map(Math.trunc) : values.in;
+      if (n.nodetype === 'dot') return values.in ?? selected.get(n)?.inputs.in?.default;
+    }
+    return undefined;
+  }
+  function uniform(p, g, env, seen = new Set()) {
+    if (!p || 'value' in p || 'texture' in p) return true;
+    if ('input' in p) { const c = env[p.input]; return c ? uniform(c.p, c.g, c.env, seen) : false; }
+    const n = g.nodes[p.node]; if (!n || seen.has(n) || spatial.has(n.nodetype)) return false;
+    const next = new Set(seen).add(n);
+    if (n.nodedef !== undefined) { const impl = implementations.get(n.nodedef); return !!impl && uniform(impl.outputs[p.output], impl, customEnvironment(n, g, env), next); }
+    return Object.values(n.inputs ?? {}).every(p => uniform(p, g, env, next));
+  }
+  function checkContext(n, g, env, label) {
+    const def = selected.get(n); if (!def) return;
+    for (const [name, spec] of Object.entries(def.inputs)) {
+      const p = n.inputs?.[name] ?? { value: spec.default };
+      if (spec.uniform && !uniform(p, g, env)) fail(`${label}: ${name} requires a uniform source`);
+      const value = literal(p, g, env);
+      if (spec.enum && value !== undefined && !spec.enum.some(v => JSON.stringify(v) === JSON.stringify(value))) fail(`${label}: invalid ${name} mode`);
+      if (['texcoord', 'geomcolor', 'tangent', 'bitangent'].includes(n.nodetype) && name === 'index' && value !== undefined && (!Number.isInteger(value[0]) || value[0] < 0 || (['tangent','bitangent'].includes(n.nodetype) && value[0] !== 0))) fail(`${label}: invalid geometry index`);
+    }
+  }
   function graphCheck(g, label, inputs = g.inputs ?? {}) {
     const edges = g.nodes.map(() => []);
     const source = (p, context, owner) => {
       if ('texture' in p) {
-        const texture = asset.textures?.[p.texture];
-        if (!texture || !asset.images?.[texture.source]) fail(`${context}: invalid texture/image resource`);
+        textureCheck(p.texture, context);
         if (p.type !== 'filename') fail(`${context}: texture source requires filename`);
       }
       if ('input' in p && inputs[p.input]?.type !== p.type) fail(`${context}: interface input type/reference mismatch`);
@@ -76,37 +162,81 @@ export function validate(asset) {
         for (const [name, p] of Object.entries(n.inputs ?? {})) if (d.inputs?.[name]?.type !== p.type) fail(`${ctx}: custom input mismatch`);
         for (const [name, p] of Object.entries(d.inputs ?? {})) if (p.type === 'filename' && !n.inputs?.[name]) fail(`${ctx}: filename default must be overridden`);
         if (g.nodedef !== undefined) dependencies[g.nodedef].push(n.nodedef);
-      } else checkStandard(n, ctx, fail);
-      if (['texcoord', 'geomcolor'].includes(n.nodetype)) {
-        const idx = n.inputs?.index?.value?.[0] ?? 0;
-        const semantic = `${n.nodetype === 'texcoord' ? 'TEXCOORD' : 'COLOR'}_${idx}`;
-        // A material-only asset has no geometry context to check.
-        for (const mesh of asset.meshes ?? []) for (const primitive of mesh.primitives) {
-          if (!(semantic in primitive.attributes)) fail(`${ctx}: missing geometry stream ${semantic}`);
-          else if (n.nodetype === 'texcoord' && asset.accessors[primitive.attributes[semantic]]?.type !== 'VEC2') fail(`${ctx}: texcoord stream must be VEC2`);
-        }
-      }
+      } else { const def = checkStandard(n, ctx, fail); if (def) selected.set(n, def); }
     });
     cycleCheck(edges, `${label}: cyclic node graph`, fail);
   }
   root.procedurals.forEach((g, i) => graphCheck(g, `procedurals/${i}`));
-  defs.forEach((g, i) => { if (g.nodetype === 'nodegraph') graphCheck(g, `definitions/${i}`, defs[g.nodedef]?.inputs ?? {}); });
+  defs.forEach((g, i) => { if (g.nodetype === 'nodegraph') {
+    const def = defs[g.nodedef];
+    if (def?.outputs && (Object.keys(g.outputs).length !== Object.keys(def.outputs).length || Object.entries(g.outputs).some(([name,p]) => p.type !== def.outputs[name]?.type))) fail(`definitions/${i}: implementation outputs mismatch`);
+    graphCheck(g, `definitions/${i}`, def?.inputs ?? {});
+  } });
   cycleCheck(dependencies, 'Recursive custom definitions', fail);
+  // Validate uniform/enum constraints in root contexts, including custom instances.
+  function contextVisit(g, env, primitive, outputs = Object.values(g.outputs), seen = new Set()) {
+    function visit(p) {
+      if ('input' in p) { const c = env[p.input]; if (c && 'node' in c.p) contextVisit(c.g, c.env, primitive, [c.p], seen); return; }
+      if (!('node' in p)) return;
+      const n = g.nodes[p.node]; if (!n || seen.has(n)) return;
+      const next = new Set(seen).add(n);
+      checkContext(n, g, env, n.nodetype);
+      if (n.nodedef !== undefined) {
+        const impl = implementations.get(n.nodedef);
+        if (impl?.outputs[p.output]) contextVisit(impl, customEnvironment(n, g, env), primitive, [impl.outputs[p.output]], next);
+      }
+      if (primitive && geometry.has(n.nodetype)) {
+        const def = selected.get(n), idx = literal(n.inputs?.index ?? { value: def?.inputs.index?.default ?? [0] }, g, env)?.[0];
+        let semantic, type;
+        if (n.nodetype === 'texcoord' || n.nodetype === 'geomcolor') {
+          if (!Number.isInteger(idx) || idx < 0) { fail(`Unsupported validation: ${n.nodetype} stream index is not statically resolvable`); return; }
+          semantic = `${n.nodetype === 'texcoord' ? 'TEXCOORD' : 'COLOR'}_${idx}`;
+          type = n.nodetype === 'texcoord' ? ['VEC2'] : ['VEC3', 'VEC4'];
+        } else { semantic = n.nodetype === 'position' ? 'POSITION' : n.nodetype === 'normal' ? 'NORMAL' : 'TANGENT'; type = semantic === 'TANGENT' ? ['VEC4'] : ['VEC3']; }
+        let accessor = asset.accessors?.[primitive.attributes[semantic]];
+        if (semantic === 'TANGENT' && primitive.attributes.NORMAL === undefined) accessor = undefined;
+        if (!accessor && semantic === 'TANGENT') {
+          const uv = asset.accessors?.[primitive.attributes.TEXCOORD_0];
+          if (!uv || uv.type !== 'VEC2') fail(`${n.nodetype}: missing TEXCOORD_0 for tangent-frame generation`);
+        }
+        else if (!accessor && semantic === 'NORMAL') {
+          if (![4,5,6].includes(primitive.mode ?? 4)) fail('Unsupported validation: generated normals for nontriangle primitive');
+        }
+        else if (!accessor) fail(`${n.nodetype}: missing geometry stream ${semantic}`);
+        else if (!type.includes(accessor.type)) fail(`${n.nodetype}: invalid stream type ${semantic}`);
+      }
+      for (const input of Object.values(n.inputs ?? {})) contextVisit(g, env, primitive, [input], next);
+    }
+    outputs.forEach(visit);
+  }
+  root.procedurals.forEach(g => {
+    const env = rootEnvironment(g);
+    g.nodes.forEach((n, i) => contextVisit(g, env, null, [{ node: i, output: Object.keys(n.outputs)[0] }]));
+  });
   for (const [i, m] of (asset.materials ?? []).entries()) for (const [name, b] of Object.entries(m.extensions?.[KHR]?.bindings ?? {})) {
     if (root.procedurals[b.index]?.outputs?.[b.output]?.type !== channels[name]) fail(`material/${i}/${name}: channel type/reference mismatch`);
     if (m.extensions?.KHR_materials_unlit && !['baseColor', 'opacity'].includes(name)) fail('Unlit material uses lit channel');
+    const g = root.procedurals[b.index];
+    if (g?.outputs[b.output]) for (const mesh of asset.meshes ?? []) for (const primitive of mesh.primitives) if (primitive.material === i) contextVisit(g, rootEnvironment(g), primitive, [g.outputs[b.output]]);
   }
+  const animationTargets = new WeakMap();
   for (const animation of asset.animations ?? []) for (const channel of animation.channels) {
     const pointer = channel.target.extensions?.KHR_animation_pointer?.pointer;
     if (!pointer?.startsWith(`/extensions/${KHR}/`)) continue;
+    if (!animationTargets.has(animation)) animationTargets.set(animation, new Set());
+    const targets = animationTargets.get(animation);
+    if (targets.has(pointer)) fail('Duplicate procedural animation target');
+    targets.add(pointer);
+    if (channel.target.path !== 'pointer' || channel.target.node !== undefined) fail('Invalid animation pointer target object');
     if (!used.includes('KHR_animation_pointer')) fail('Animation pointer extension undeclared');
     const match = pointer.match(/^\/extensions\/KHR_texture_procedurals\/procedurals\/(0|[1-9][0-9]*)\/inputs\/([^/]+)\/value$/);
-    if (!match) { fail('Invalid procedural animation target'); continue; }
+    if (!match || /~(?![01])/.test(match[2])) { fail('Invalid procedural animation target'); continue; }
     const name = match[2].replace(/~1/g, '/').replace(/~0/g, '~');
     const p = root.procedurals[Number(match[1])]?.inputs?.[name];
     const types = { float: 'SCALAR', vector2: 'VEC2', vector3: 'VEC3', color3: 'VEC3', vector4: 'VEC4', color4: 'VEC4' };
     const s = animation.samplers[channel.sampler], output = asset.accessors?.[s?.output], input = asset.accessors?.[s?.input];
-    if (!p || !('value' in p) || !types[p.type] || output?.type !== types[p.type] || output?.componentType !== 5126) fail('Animation accessor/target type mismatch');
+    if (input?.type !== 'SCALAR' || input?.componentType !== 5126 || !input?.min || !input?.max) fail('Invalid animation time accessor');
+    if (!p || !('value' in p) || !types[p.type] || output?.type !== types[p.type]) fail('Animation accessor/target type mismatch');
     if (output?.count !== input?.count * (s?.interpolation === 'CUBICSPLINE' ? 3 : 1)) fail('Animation key count mismatch');
   }
   return errors;
@@ -117,21 +247,19 @@ function cycleCheck(edges, message, fail) {
   edges.forEach((_, i) => visit(i));
 }
 function checkStandard(n, context, fail) {
-  // Deliberately limited signature checks; this is not the full MaterialX library validator.
-  const names = { constant: ['value'], add: ['in1', 'in2'], subtract: ['in1', 'in2'], multiply: ['in1', 'in2'], divide: ['in1', 'in2'], modulo: ['in1', 'in2'], floor: ['in'], mix: ['fg', 'bg', 'mix'], extract: ['in', 'index'], texcoord: ['index'], geomcolor: ['index'], image: ['file', 'texcoord'] };
-  if (!names[n.nodetype]) return;
-  if (Object.keys(n.outputs).join() !== 'out') fail(`${context}: standard output must be out`);
-  for (const key of Object.keys(n.inputs ?? {})) if (!names[n.nodetype].includes(key) && n.nodetype !== 'image') fail(`${context}: unknown standard input ${key}`);
-  for (const [key, p] of Object.entries(n.inputs ?? {})) {
-    const expected = key === 'index' ? 'integer' : key === 'file' ? 'filename' : key === 'texcoord' ? 'vector2' : key === 'mix' ? 'float' : key === 'in' && n.nodetype === 'extract' ? null : n.type;
-    if (expected && p.type !== expected) fail(`${context}: standard input ${key} type mismatch`);
+  const candidates = library.definitions.filter(d => d.node === n.nodetype && Object.keys(d.outputs).length === Object.keys(n.outputs).length && Object.entries(n.outputs).every(([name,p]) => d.outputs[name] === p.type) && Object.entries(n.inputs ?? {}).every(([name,p]) => d.inputs[name]?.type === p.type));
+  if (candidates.length !== 1) { fail(`${context}: unknown, excluded, or ambiguous MaterialX signature`); return; }
+  const def = candidates[0];
+  for (const [name, p] of Object.entries(def.inputs)) {
+    if (!n.inputs?.[name] && (p.geometricDefault || p.type === 'filename' || !Object.hasOwn(p, 'default'))) fail(`${context}: required explicit input ${name}`);
   }
-  if (n.nodetype === 'texcoord' && n.type !== 'vector2') fail(`${context}: texcoord must output vector2`);
-  if (n.nodetype === 'extract' && n.type !== 'float') fail(`${context}: extract must output float`);
-  if (n.nodetype === 'image' && !n.inputs?.texcoord) fail(`${context}: geometric image default must be explicit`);
+  return def;
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   let files = process.argv.slice(2);
   if (files.includes('examples/*.gltf')) files = fs.readdirSync(path.join(directory, 'examples')).filter(n => n.endsWith('.gltf')).map(n => path.join(directory, 'examples', n));
-  for (const file of files) { const errors = validate(JSON.parse(fs.readFileSync(file, 'utf8'))); console.log(`${file}: ${errors.length ? errors.join('; ') : 'valid'}`); if (errors.length) process.exitCode = 1; }
+  for (const file of files) {
+    try { const errors = validate(parseAsset(fs.readFileSync(file, 'utf8'))); console.log(`${file}: ${errors.length ? errors.join('; ') : 'valid'}`); if (errors.length) process.exitCode = 1; }
+    catch (error) { console.error(`${file}: ${error.message}`); process.exitCode = 1; }
+  }
 }

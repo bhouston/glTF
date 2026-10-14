@@ -8,19 +8,39 @@ From this extension directory run `npm ci`, `npm test`, and `npm run validate`.
 The nonanimated fixtures include a visible quad; the animated fixture isolates
 the shared graph interface and escaped JSON pointer.
 
-Validation covers the repository's core glTF 2020-12 schemas, the extension's
-draft-07 schemas, reference types, node and custom-definition cycles, material
-channel bindings, texture resources, geometry streams, and animation targets.
+Validation covers the repository's core glTF 2020-12 schemas, both extension
+declaration schemas, reference types, node and custom-definition cycles,
+material channel bindings, texture resources, reachable geometry streams in
+each bound primitive context, uniform-source constraints, and animation targets.
 The checkerboard and independent-channel tests evaluate elementary arithmetic
 on the CPU. These tests are not GPU render tests or proof of full MaterialX
-operator conformance. The semantic validator checks signatures only for the
-listed elementary fixture operators; unknown library operators require the
-normative MaterialX 1.39.0 library validation. It does not resolve all material
-extension interactions, validate binary buffer contents, or execute custom
-definitions or image sampling. IRI syntax is delegated to resource loading.
+operator conformance. Standard signatures, literal defaults, and string modes
+come from the checked-in registry generated from pinned MaterialX 1.39.0 XML.
+Unknown or profile-excluded node categories and ambiguous overloads are rejected.
+Numeric `enumvalues` UI metadata is not treated as a semantic closed range.
+To regenerate the registry run `node tools/generate-library.mjs`; this downloads
+only the two pinned official definition files and records their SHA-256 digests.
+An optional directory argument supplies local copies instead. No network is
+used by the validator or tests. Source attribution and exclusions are included
+in the registry, with an Apache-2.0 license sidecar.
+
+The validator does not resolve every material-extension interaction, validate
+all binary buffer/codec contents, or numerically execute custom definitions or
+image sampling. IRI syntax is delegated to resource loading. Standard geometry
+and image nodes are conservatively varying; pure operations on uniform values
+and graph-interface values are uniform. Custom implementations are expanded
+with actual override contexts for these checks. Static stream-index evaluation
+supports literals, interfaces, constants, elementary arithmetic, and custom
+pass-throughs. An unresolved uniform stream index produces an explicit
+`Unsupported validation:` diagnostic; this is a tool limitation, not proof
+that the graph is normatively invalid. General runtime mode/range and finite
+result checks require execution in addition to the checks provided here.
 Other validators must also enforce the complete specification.
 
 Core fallback materials are independently valid, with no dummy textures.
-Checkerboard coordinates are an overridable graph interface; rendering a
-spatial checkerboard requires supplying coordinates, while the default is a
-constant valid fallback. The image fixture uses an explicit TEXCOORD_0 node.
+The checkerboard and image fixtures use explicit TEXCOORD_0 nodes; the
+checkerboard multiplies UV by eight before calculating parity. The embedded
+PNG is generated deterministically and tested for chunk CRCs and pixel data.
+CLI parsing rejects duplicate properties, nonfinite numbers, comments, and
+trailing commas; callers of `validate(object)` should use `parseAsset(text)`
+when reading JSON so duplicate keys cannot be lost before validation.

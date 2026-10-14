@@ -4,7 +4,7 @@
     "generator": "KHR_texture_procedurals fixtures",
     "extras": {
       "copyright": "Copyright 2026 The Khronos Group Inc.",
-      "license": "SPDX-License-Identifier: Apache-2.0"
+      "license": "Apache-2.0"
     }
   },
   "extensionsUsed": [
@@ -105,7 +105,7 @@
   ],
   "images": [
     {
-      "uri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII="
+      "uri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC"
     }
   ],
   "buffers": [

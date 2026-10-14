@@ -4,7 +4,7 @@
     "generator": "KHR_texture_procedurals fixtures",
     "extras": {
       "copyright": "Copyright 2026 The Khronos Group Inc.",
-      "license": "SPDX-License-Identifier: Apache-2.0"
+      "license": "Apache-2.0"
     }
   },
   "extensionsUsed": [

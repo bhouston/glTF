@@ -4,7 +4,7 @@
     "generator": "KHR_texture_procedurals fixtures",
     "extras": {
       "copyright": "Copyright 2026 The Khronos Group Inc.",
-      "license": "SPDX-License-Identifier: Apache-2.0"
+      "license": "Apache-2.0"
     }
   },
   "extensionsUsed": [
@@ -17,16 +17,7 @@
         {
           "nodetype": "nodegraph",
           "type": "float",
-          "inputs": {
-            "uv": {
-              "nodetype": "input",
-              "type": "vector2",
-              "value": [
-                0,
-                0
-              ]
-            }
-          },
+          "inputs": {},
           "nodes": [
             {
               "nodetype": "extract",
@@ -35,7 +26,8 @@
                 "in": {
                   "nodetype": "input",
                   "type": "vector2",
-                  "input": "uv"
+                  "node": 7,
+                  "output": "out"
                 },
                 "index": {
                   "nodetype": "input",
@@ -59,7 +51,8 @@
                 "in": {
                   "nodetype": "input",
                   "type": "vector2",
-                  "input": "uv"
+                  "node": 7,
+                  "output": "out"
                 },
                 "index": {
                   "nodetype": "input",
@@ -158,6 +151,51 @@
                 "out": {
                   "nodetype": "output",
                   "type": "float"
+                }
+              }
+            },
+            {
+              "nodetype": "texcoord",
+              "type": "vector2",
+              "inputs": {
+                "index": {
+                  "nodetype": "input",
+                  "type": "integer",
+                  "value": [
+                    0
+                  ]
+                }
+              },
+              "outputs": {
+                "out": {
+                  "nodetype": "output",
+                  "type": "vector2"
+                }
+              }
+            },
+            {
+              "nodetype": "multiply",
+              "type": "vector2",
+              "inputs": {
+                "in1": {
+                  "nodetype": "input",
+                  "type": "vector2",
+                  "node": 6,
+                  "output": "out"
+                },
+                "in2": {
+                  "nodetype": "input",
+                  "type": "vector2",
+                  "value": [
+                    8,
+                    8
+                  ]
+                }
+              },
+              "outputs": {
+                "out": {
+                  "nodetype": "output",
+                  "type": "vector2"
                 }
               }
             }
