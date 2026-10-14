@@ -1,4 +1,7 @@
-<!-- Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: CC-BY-4.0 -->
+<!--
+Copyright 2024-2026 The Khronos Group Inc.
+SPDX-License-Identifier: LicenseRef-KhronosSpecCopyright
+-->
 
 # KHR_materials_procedural
 
@@ -26,6 +29,8 @@ Written against glTF 2.0. The key words **MUST**, **MUST NOT**, **REQUIRED**, **
 This extension defines procedural graphs that compute glTF material inputs from constants, geometric streams, and sampled resources. Graphs use MaterialX-compatible nodes to describe patterns and material-channel calculations without storing each result as a bitmap. The existing glTF material model determines shading. Implementations MAY compile graphs into material shaders or evaluate them by another method that preserves their behavior.
 
 Graphs supply the core metallic-roughness inputs and the base color/opacity inputs of `KHR_materials_unlit`. BSDFs, EDFs, closures, surface/displacement shaders and executable source are excluded. Binding to inputs introduced by other material extensions requires a separate specification. The emissive rule below defines the interaction with `KHR_materials_emissive_strength`.
+
+This extension **MUST NOT** be used on a material that uses `KHR_materials_pbrSpecularGlossiness`.
 
 Node definitions use the [EXT_materials_procedural_mx_1_39](../../Vendor/EXT_materials_procedural_mx_1_39/README.md) MaterialX library profile.
 
@@ -64,6 +69,8 @@ An asset using procedural graphs **MUST** list both `KHR_materials_procedural` a
 Assets that rely on procedural materials **MUST** list both identifiers in `extensionsRequired` as well as `extensionsUsed`. Clients that do not support a required extension cannot load the asset.
 
 When the extension is optional, clients that do not support it ignore its objects and use the standard glTF material definition. Authors MAY include standard factors or textures for that use, but no additional material or bitmap representation is required by this extension.
+
+A client unable to evaluate a valid graph used by an asset does not support the selected profile for that asset. The same required-extension rules apply.
 
 ## Material-channel binding
 
@@ -180,6 +187,12 @@ Geometry nodes read the interpolated geometry after morphing and skinning, befor
 
 Name-based arbitrary geometric properties are outside the profile. The MaterialX companion specifies permitted geometry nodes and supported coordinate spaces.
 
+### Coordinate spaces
+
+Let `M` be the current mesh instance's object-to-world transform: the node's global transform, composed with the instance transform when instancing is used. Unskinned object-space values are deformed mesh-local values; world-space values include `M`. For skinned geometry, world-space values are the results of core glTF skinning using joint global transforms and inverse bind matrices. The skinned mesh node transform **MUST NOT** be applied again. Object-space values are those same skinned results expressed in the mesh instance frame using `inverse(M)`.
+
+`transformpoint`, `transformvector`, and `transformnormal` use the same `M` and inverse when converting between `object` and `world`. Points include translation; vectors do not; normals use inverse transpose and normalization. A requested inverse **MUST** exist. These transformations convert coordinate frames; they do not apply skinning a second time.
+
 ## Custom functional definitions
 
 `procedural_definitions` is one array containing definition (`nodetype: "nodedef"`) entries and functional implementation (`nodetype: "nodegraph"`) entries. A definition contains `node`, optional `name`, optional `version` and `defaultVersion` (default false), optional `nodegroup`, an input-default map, and a nonempty output-description map. Every definition input **MUST** have a typed default value. An empty string is allowed as a filename default only on a definition; every reachable instance **MUST** override such a default with a texture resource. This permits conversion of MaterialX filename interfaces without permitting unresolved files at runtime.
@@ -234,7 +247,7 @@ Runnable examples and Node-based structural/semantic checks are provided in this
 
 ## Appendix: Full Khronos Copyright Statement
 
-Copyright 2024 The Khronos Group Inc.
+Copyright 2024-2026 The Khronos Group Inc.
 
 This Specification is protected by copyright laws and contains material proprietary to Khronos. Except as described by these terms, it or any components may not be reproduced, republished, distributed, transmitted, displayed, broadcast or otherwise exploited in any manner without the express prior written permission of Khronos.
 

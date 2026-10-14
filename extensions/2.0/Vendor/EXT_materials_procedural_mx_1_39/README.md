@@ -1,4 +1,7 @@
-<!-- Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: CC-BY-4.0 -->
+<!--
+Copyright 2024-2026 The Khronos Group Inc.
+SPDX-License-Identifier: LicenseRef-KhronosSpecCopyright
+-->
 
 # EXT_materials_procedural_mx_1_39
 
@@ -117,7 +120,7 @@ Examples and validation tools are shared with the base extension: [examples](../
 
 ## Appendix: Full Khronos Copyright Statement
 
-Copyright 2024 The Khronos Group Inc.
+Copyright 2024-2026 The Khronos Group Inc.
 
 This Specification is protected by copyright laws and contains material proprietary to Khronos. Except as described by these terms, it or any components may not be reproduced, republished, distributed, transmitted, displayed, broadcast or otherwise exploited in any manner without the express prior written permission of Khronos.
 
