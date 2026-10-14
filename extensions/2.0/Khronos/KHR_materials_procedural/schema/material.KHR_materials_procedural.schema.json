@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: Apache-2.0",
+  "title": "KHR_materials_procedural material extension",
+  "type": "object",
+  "properties": {
+    "extras": {},
+    "extensions": {
+      "type": "object",
+      "not": {
+        "anyOf": [
+          {
+            "required": [
+              "KHR_materials_procedural"
+            ]
+          },
+          {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          }
+        ]
+      },
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "bindings": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "baseColor": {
+          "$ref": "#/definitions/binding"
+        },
+        "metallic": {
+          "$ref": "#/definitions/binding"
+        },
+        "roughness": {
+          "$ref": "#/definitions/binding"
+        },
+        "opacity": {
+          "$ref": "#/definitions/binding"
+        },
+        "normal": {
+          "$ref": "#/definitions/binding"
+        },
+        "occlusion": {
+          "$ref": "#/definitions/binding"
+        },
+        "emissive": {
+          "$ref": "#/definitions/binding"
+        },
+        "anisotropyStrength": {
+          "$ref": "#/definitions/binding"
+        },
+        "anisotropyDirection": {
+          "$ref": "#/definitions/binding"
+        },
+        "clearcoat": {
+          "$ref": "#/definitions/binding"
+        },
+        "clearcoatRoughness": {
+          "$ref": "#/definitions/binding"
+        },
+        "clearcoatNormal": {
+          "$ref": "#/definitions/binding"
+        },
+        "dispersion": {
+          "$ref": "#/definitions/binding"
+        },
+        "emissiveStrength": {
+          "$ref": "#/definitions/binding"
+        },
+        "ior": {
+          "$ref": "#/definitions/binding"
+        },
+        "iridescence": {
+          "$ref": "#/definitions/binding"
+        },
+        "iridescenceIor": {
+          "$ref": "#/definitions/binding"
+        },
+        "iridescenceThickness": {
+          "$ref": "#/definitions/binding"
+        },
+        "sheenColor": {
+          "$ref": "#/definitions/binding"
+        },
+        "sheenRoughness": {
+          "$ref": "#/definitions/binding"
+        },
+        "specular": {
+          "$ref": "#/definitions/binding"
+        },
+        "specularColor": {
+          "$ref": "#/definitions/binding"
+        },
+        "transmission": {
+          "$ref": "#/definitions/binding"
+        },
+        "thickness": {
+          "$ref": "#/definitions/binding"
+        },
+        "attenuationDistance": {
+          "$ref": "#/definitions/binding"
+        },
+        "attenuationColor": {
+          "$ref": "#/definitions/binding"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "bindings"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "binding": {
+      "type": "object",
+      "properties": {
+        "extras": {},
+        "extensions": {
+          "type": "object",
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "index",
+        "output"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

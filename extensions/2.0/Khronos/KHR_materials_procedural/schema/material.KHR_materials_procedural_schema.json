@@ -1,0 +1,1844 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: Apache-2.0",
+  "title": "KHR_materials_procedural whole-document overlay",
+  "description": "Apply alongside the core glTF 2.0 schema. Semantic reference, library signature, graph type, and cycle validation is also required. Required identifiers must also be a subset of extensionsUsed; this cross-array constraint is validated semantically.",
+  "type": "object",
+  "properties": {
+    "extensionsUsed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "not": {
+          "allOf": [
+            {
+              "pattern": "^EXT_materials_procedural_mx_"
+            },
+            {
+              "not": {
+                "const": "EXT_materials_procedural_mx_1_39"
+              }
+            }
+          ]
+        }
+      },
+      "uniqueItems": true,
+      "allOf": [
+        {
+          "contains": {
+            "const": "KHR_materials_procedural"
+          }
+        },
+        {
+          "contains": {
+            "const": "EXT_materials_procedural_mx_1_39"
+          }
+        }
+      ]
+    },
+    "extensionsRequired": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "not": {
+          "allOf": [
+            {
+              "pattern": "^EXT_materials_procedural_mx_"
+            },
+            {
+              "not": {
+                "const": "EXT_materials_procedural_mx_1_39"
+              }
+            }
+          ]
+        }
+      },
+      "uniqueItems": true,
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              {
+                "contains": {
+                  "const": "KHR_materials_procedural"
+                }
+              },
+              {
+                "contains": {
+                  "const": "EXT_materials_procedural_mx_1_39"
+                }
+              }
+            ]
+          },
+          "then": {
+            "allOf": [
+              {
+                "contains": {
+                  "const": "KHR_materials_procedural"
+                }
+              },
+              {
+                "contains": {
+                  "const": "EXT_materials_procedural_mx_1_39"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "extensions": {
+      "type": "object",
+      "properties": {
+        "KHR_materials_procedural": {
+          "$ref": "glTF.KHR_materials_procedural.schema.json"
+        }
+      },
+      "required": [
+        "KHR_materials_procedural"
+      ],
+      "not": {
+        "required": [
+          "EXT_materials_procedural_mx_1_39"
+        ]
+      },
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "materials": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "properties": {
+              "KHR_materials_procedural": {
+                "$ref": "material.KHR_materials_procedural.schema.json"
+              }
+            },
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "pbrMetallicRoughness": {
+            "type": "object",
+            "properties": {
+              "baseColorTexture": {
+                "type": "object",
+                "properties": {
+                  "extensions": {
+                    "type": "object",
+                    "not": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "KHR_materials_procedural"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "EXT_materials_procedural_mx_1_39"
+                          ]
+                        }
+                      ]
+                    },
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                }
+              },
+              "metallicRoughnessTexture": {
+                "type": "object",
+                "properties": {
+                  "extensions": {
+                    "type": "object",
+                    "not": {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "KHR_materials_procedural"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "EXT_materials_procedural_mx_1_39"
+                          ]
+                        }
+                      ]
+                    },
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                }
+              },
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "normalTexture": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "KHR_materials_procedural"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "EXT_materials_procedural_mx_1_39"
+                      ]
+                    }
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "occlusionTexture": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "KHR_materials_procedural"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "EXT_materials_procedural_mx_1_39"
+                      ]
+                    }
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "emissiveTexture": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "KHR_materials_procedural"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "EXT_materials_procedural_mx_1_39"
+                      ]
+                    }
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_unlit",
+                    "KHR_materials_procedural"
+                  ],
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "properties": {
+                        "bindings": {
+                          "propertyNames": {
+                            "enum": [
+                              "baseColor",
+                              "opacity"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural",
+                    "KHR_materials_pbrSpecularGlossiness"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "anisotropyStrength"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "anisotropyDirection"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_anisotropy"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "clearcoat"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "clearcoatRoughness"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "clearcoatNormal"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_clearcoat"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "dispersion"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_dispersion"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "emissiveStrength"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_emissive_strength"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "ior"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_ior"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "iridescence"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "iridescenceIor"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "iridescenceThickness"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_iridescence"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "sheenColor"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "sheenRoughness"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_sheen"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "specular"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "specularColor"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_specular"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "transmission"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_transmission"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "thickness"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "attenuationDistance"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "attenuationColor"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_volume"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "dispersion"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_volume"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "ior"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "extensions": {
+                  "properties": {
+                    "KHR_materials_ior": {
+                      "properties": {
+                        "ior": {
+                          "not": {
+                            "const": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "textures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ]
+                },
+                {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                }
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ]
+                },
+                {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                }
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "properties": {
+        "extensions": {
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "accessors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "sparse": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              },
+              "indices": {
+                "type": "object",
+                "properties": {
+                  "extensions": {
+                    "type": "object",
+                    "not": {
+                      "required": [
+                        "EXT_materials_procedural_mx_1_39"
+                      ]
+                    },
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                }
+              },
+              "values": {
+                "type": "object",
+                "properties": {
+                  "extensions": {
+                    "type": "object",
+                    "not": {
+                      "required": [
+                        "EXT_materials_procedural_mx_1_39"
+                      ]
+                    },
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "animations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "extensions": {
+                  "type": "object",
+                  "not": {
+                    "required": [
+                      "EXT_materials_procedural_mx_1_39"
+                    ]
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                },
+                "target": {
+                  "type": "object",
+                  "properties": {
+                    "extensions": {
+                      "type": "object",
+                      "not": {
+                        "required": [
+                          "EXT_materials_procedural_mx_1_39"
+                        ]
+                      },
+                      "additionalProperties": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "samplers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "extensions": {
+                  "type": "object",
+                  "not": {
+                    "required": [
+                      "EXT_materials_procedural_mx_1_39"
+                    ]
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "buffers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "bufferViews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "cameras": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "perspective": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "orthographic": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "meshes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "primitives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "extensions": {
+                  "type": "object",
+                  "not": {
+                    "required": [
+                      "EXT_materials_procedural_mx_1_39"
+                    ]
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "samplers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "skins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "extensionsUsed",
+    "extensions"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "anisotropyStrength"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "anisotropyDirection"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_anisotropy"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "clearcoat"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "clearcoatRoughness"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "clearcoatNormal"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_clearcoat"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "dispersion"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_dispersion"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "emissiveStrength"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_emissive_strength"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "ior"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_ior"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "iridescence"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "iridescenceIor"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "iridescenceThickness"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_iridescence"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "sheenColor"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "sheenRoughness"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_sheen"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "specular"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "specularColor"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_specular"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "transmission"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_transmission"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "materials"
+        ],
+        "properties": {
+          "materials": {
+            "contains": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural"
+                  ],
+                  "properties": {
+                    "KHR_materials_procedural": {
+                      "required": [
+                        "bindings"
+                      ],
+                      "properties": {
+                        "bindings": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "thickness"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "attenuationDistance"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "attenuationColor"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "extensionsUsed": {
+            "contains": {
+              "const": "KHR_materials_volume"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

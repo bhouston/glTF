@@ -1,0 +1,495 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "KHR_materials_procedural material extension fixture",
+    "extras": {
+      "copyright": "Copyright 2026 The Khronos Group Inc.",
+      "license": "Apache-2.0"
+    }
+  },
+  "extensionsUsed": [
+    "KHR_materials_procedural",
+    "EXT_materials_procedural_mx_1_39",
+    "KHR_materials_anisotropy",
+    "KHR_materials_clearcoat",
+    "KHR_materials_dispersion",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_ior",
+    "KHR_materials_iridescence",
+    "KHR_materials_sheen",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_materials_volume"
+  ],
+  "extensionsRequired": [
+    "KHR_materials_procedural",
+    "EXT_materials_procedural_mx_1_39"
+  ],
+  "extensions": {
+    "KHR_materials_procedural": {
+      "procedurals": [
+        {
+          "nodetype": "nodegraph",
+          "type": "multioutput",
+          "inputs": {
+            "anisotropyStrength": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0.6
+              ]
+            },
+            "anisotropyDirection": {
+              "nodetype": "input",
+              "type": "vector2",
+              "value": [
+                0,
+                1
+              ]
+            },
+            "clearcoat": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0.4
+              ]
+            },
+            "clearcoatRoughness": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0.2
+              ]
+            },
+            "clearcoatNormal": {
+              "nodetype": "input",
+              "type": "vector3",
+              "value": [
+                0,
+                0,
+                1
+              ]
+            },
+            "dispersion": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0.3
+              ]
+            },
+            "emissiveStrength": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                3
+              ]
+            },
+            "ior": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                1.45
+              ]
+            },
+            "iridescence": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0.5
+              ]
+            },
+            "iridescenceIor": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                1.3
+              ]
+            },
+            "iridescenceThickness": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                250
+              ]
+            },
+            "sheenColor": {
+              "nodetype": "input",
+              "type": "color3",
+              "value": [
+                0.2,
+                0.1,
+                0.05
+              ]
+            },
+            "sheenRoughness": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0.6
+              ]
+            },
+            "specular": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0.8
+              ]
+            },
+            "specularColor": {
+              "nodetype": "input",
+              "type": "color3",
+              "value": [
+                2,
+                1,
+                0.5
+              ]
+            },
+            "transmission": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0.7
+              ]
+            },
+            "thickness": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0
+              ]
+            },
+            "attenuationDistance": {
+              "nodetype": "input",
+              "type": "float",
+              "value": [
+                0.1
+              ]
+            },
+            "attenuationColor": {
+              "nodetype": "input",
+              "type": "color3",
+              "value": [
+                0.5,
+                0.75,
+                1
+              ]
+            },
+            "emissive": {
+              "nodetype": "input",
+              "type": "color3",
+              "value": [
+                0.1,
+                0.2,
+                0.3
+              ]
+            }
+          },
+          "nodes": [],
+          "outputs": {
+            "anisotropyStrength": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "anisotropyStrength"
+            },
+            "anisotropyDirection": {
+              "nodetype": "output",
+              "type": "vector2",
+              "input": "anisotropyDirection"
+            },
+            "clearcoat": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "clearcoat"
+            },
+            "clearcoatRoughness": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "clearcoatRoughness"
+            },
+            "clearcoatNormal": {
+              "nodetype": "output",
+              "type": "vector3",
+              "input": "clearcoatNormal"
+            },
+            "dispersion": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "dispersion"
+            },
+            "emissiveStrength": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "emissiveStrength"
+            },
+            "ior": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "ior"
+            },
+            "iridescence": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "iridescence"
+            },
+            "iridescenceIor": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "iridescenceIor"
+            },
+            "iridescenceThickness": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "iridescenceThickness"
+            },
+            "sheenColor": {
+              "nodetype": "output",
+              "type": "color3",
+              "input": "sheenColor"
+            },
+            "sheenRoughness": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "sheenRoughness"
+            },
+            "specular": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "specular"
+            },
+            "specularColor": {
+              "nodetype": "output",
+              "type": "color3",
+              "input": "specularColor"
+            },
+            "transmission": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "transmission"
+            },
+            "thickness": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "thickness"
+            },
+            "attenuationDistance": {
+              "nodetype": "output",
+              "type": "float",
+              "input": "attenuationDistance"
+            },
+            "attenuationColor": {
+              "nodetype": "output",
+              "type": "color3",
+              "input": "attenuationColor"
+            },
+            "emissive": {
+              "nodetype": "output",
+              "type": "color3",
+              "input": "emissive"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "materials": [
+    {
+      "name": "Conditional material extension channels",
+      "pbrMetallicRoughness": {
+        "metallicFactor": 0,
+        "roughnessFactor": 0.3
+      },
+      "extensions": {
+        "KHR_materials_anisotropy": {},
+        "KHR_materials_clearcoat": {},
+        "KHR_materials_dispersion": {},
+        "KHR_materials_emissive_strength": {},
+        "KHR_materials_ior": {},
+        "KHR_materials_iridescence": {},
+        "KHR_materials_sheen": {},
+        "KHR_materials_specular": {},
+        "KHR_materials_transmission": {},
+        "KHR_materials_volume": {},
+        "KHR_materials_procedural": {
+          "bindings": {
+            "anisotropyStrength": {
+              "index": 0,
+              "output": "anisotropyStrength"
+            },
+            "anisotropyDirection": {
+              "index": 0,
+              "output": "anisotropyDirection"
+            },
+            "clearcoat": {
+              "index": 0,
+              "output": "clearcoat"
+            },
+            "clearcoatRoughness": {
+              "index": 0,
+              "output": "clearcoatRoughness"
+            },
+            "clearcoatNormal": {
+              "index": 0,
+              "output": "clearcoatNormal"
+            },
+            "dispersion": {
+              "index": 0,
+              "output": "dispersion"
+            },
+            "emissiveStrength": {
+              "index": 0,
+              "output": "emissiveStrength"
+            },
+            "ior": {
+              "index": 0,
+              "output": "ior"
+            },
+            "iridescence": {
+              "index": 0,
+              "output": "iridescence"
+            },
+            "iridescenceIor": {
+              "index": 0,
+              "output": "iridescenceIor"
+            },
+            "iridescenceThickness": {
+              "index": 0,
+              "output": "iridescenceThickness"
+            },
+            "sheenColor": {
+              "index": 0,
+              "output": "sheenColor"
+            },
+            "sheenRoughness": {
+              "index": 0,
+              "output": "sheenRoughness"
+            },
+            "specular": {
+              "index": 0,
+              "output": "specular"
+            },
+            "specularColor": {
+              "index": 0,
+              "output": "specularColor"
+            },
+            "transmission": {
+              "index": 0,
+              "output": "transmission"
+            },
+            "thickness": {
+              "index": 0,
+              "output": "thickness"
+            },
+            "attenuationDistance": {
+              "index": 0,
+              "output": "attenuationDistance"
+            },
+            "attenuationColor": {
+              "index": 0,
+              "output": "attenuationColor"
+            },
+            "emissive": {
+              "index": 0,
+              "output": "emissive"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 288,
+      "uri": "data:application/octet-stream;base64,AACAvwAAgL8AAAAAAACAPwAAgL8AAAAAAACAPwAAgD8AAAAAAACAvwAAgL8AAAAAAACAPwAAgD8AAAAAAACAvwAAgD8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAIA/"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 72,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 72,
+      "byteLength": 48,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 120,
+      "byteLength": 72,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 192,
+      "byteLength": 96,
+      "target": 34962
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 6,
+      "type": "VEC3",
+      "min": [
+        -1,
+        -1,
+        0
+      ],
+      "max": [
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 6,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 6,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 6,
+      "type": "VEC4"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "TEXCOORD_0": 1,
+            "NORMAL": 2,
+            "TANGENT": 3
+          },
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "scene": 0
+}
