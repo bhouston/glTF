@@ -8,8 +8,17 @@
     "extensions": {
       "type": "object",
       "not": {
-        "required": [
-          "EXT_materials_procedural_mx_1_39"
+        "anyOf": [
+          {
+            "required": [
+              "KHR_materials_procedural"
+            ]
+          },
+          {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          }
         ]
       },
       "additionalProperties": {
@@ -91,8 +100,17 @@
         "extensions": {
           "type": "object",
           "not": {
-            "required": [
-              "EXT_materials_procedural_mx_1_39"
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
             ]
           },
           "additionalProperties": {
@@ -461,8 +479,17 @@
         "extensions": {
           "type": "object",
           "not": {
-            "required": [
-              "EXT_materials_procedural_mx_1_39"
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
             ]
           },
           "additionalProperties": {
@@ -897,8 +924,17 @@
         "extensions": {
           "type": "object",
           "not": {
-            "required": [
-              "EXT_materials_procedural_mx_1_39"
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
             ]
           },
           "additionalProperties": {
@@ -1242,8 +1278,17 @@
         "extensions": {
           "type": "object",
           "not": {
-            "required": [
-              "EXT_materials_procedural_mx_1_39"
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
             ]
           },
           "additionalProperties": {
@@ -1276,8 +1321,17 @@
         "extensions": {
           "type": "object",
           "not": {
-            "required": [
-              "EXT_materials_procedural_mx_1_39"
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
             ]
           },
           "additionalProperties": {
@@ -1354,8 +1408,17 @@
         "extensions": {
           "type": "object",
           "not": {
-            "required": [
-              "EXT_materials_procedural_mx_1_39"
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
             ]
           },
           "additionalProperties": {
@@ -1433,8 +1496,17 @@
         "extensions": {
           "type": "object",
           "not": {
-            "required": [
-              "EXT_materials_procedural_mx_1_39"
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
             ]
           },
           "additionalProperties": {
@@ -1506,8 +1578,17 @@
         "extensions": {
           "type": "object",
           "not": {
-            "required": [
-              "EXT_materials_procedural_mx_1_39"
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
             ]
           },
           "additionalProperties": {
@@ -1574,8 +1655,17 @@
         "extensions": {
           "type": "object",
           "not": {
-            "required": [
-              "EXT_materials_procedural_mx_1_39"
+            "anyOf": [
+              {
+                "required": [
+                  "KHR_materials_procedural"
+                ]
+              },
+              {
+                "required": [
+                  "EXT_materials_procedural_mx_1_39"
+                ]
+              }
             ]
           },
           "additionalProperties": {

@@ -61,3 +61,22 @@ test('procedural metallic-roughness bindings reject specular-glossiness on same 
   assert.equal(overlay(asset), false);
   assert.ok(validate(asset).length);
 });
+
+for (const name of ['extras', 'extensions']) {
+  test(`graph input named ${name} is a port descriptor, not metadata`, () => {
+    const asset = read(), graph = asset.extensions[KHR].procedurals[0];
+    graph.inputs = { [name]: { nodetype: 'input', type: 'float', value: [0] } };
+    assert.deepEqual(validate(asset), []);
+    graph.inputs[name].extensions = { [KHR]: { arbitrary: 'invalid placement' } };
+    assert.equal(overlay(asset), false);
+    assert.ok(validate(asset).length);
+  });
+  test(`graph output named ${name} is a port descriptor, not metadata`, () => {
+    const asset = read(), graph = asset.extensions[KHR].procedurals[0];
+    graph.outputs[name] = structuredClone(graph.outputs.metal);
+    assert.deepEqual(validate(asset), []);
+    graph.outputs[name].extensions = { [KHR]: { arbitrary: 'invalid placement' } };
+    assert.equal(overlay(asset), false);
+    assert.ok(validate(asset).length);
+  });
+}
