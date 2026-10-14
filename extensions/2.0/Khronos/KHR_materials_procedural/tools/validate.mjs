@@ -92,14 +92,17 @@ export function validate(asset) {
     }
     if (!sources.length || sources.some(source => !asset.images?.[source])) fail(`${context}: invalid texture/image resource`);
   }
-  function materialTextureCheck(value) {
-    if (!value || typeof value !== 'object') return;
-    for (const [name, child] of Object.entries(value)) {
-      if (name === 'extras' || name === KHR) continue;
-      if (name === 'extensions') { for (const [id, payload] of Object.entries(child ?? {})) if (id.startsWith('KHR_materials_')) materialTextureCheck(payload); }
-      else if (name.endsWith('Texture') && child && typeof child === 'object' && 'index' in child) textureCheck(child.index, `material/${name}`);
-      else if (name !== KHR) materialTextureCheck(child);
-    }
+  function materialTextureCheck(material) {
+    const pbr = material.pbrMetallicRoughness;
+    // Only core texture-info properties are known here. Other extensions
+    // validate their own payloads, which must remain opaque to this tool.
+    for (const [name, info] of [
+      ['baseColorTexture', pbr?.baseColorTexture],
+      ['metallicRoughnessTexture', pbr?.metallicRoughnessTexture],
+      ['normalTexture', material.normalTexture],
+      ['occlusionTexture', material.occlusionTexture],
+      ['emissiveTexture', material.emissiveTexture]
+    ]) if (info && 'index' in info) textureCheck(info.index, `material/${name}`);
   }
   (asset.materials ?? []).forEach(materialTextureCheck);
   const rootEnvironment = g => Object.fromEntries(Object.entries(g.inputs ?? {}).map(([name, p]) => [name, { p, g, env: {} }]));

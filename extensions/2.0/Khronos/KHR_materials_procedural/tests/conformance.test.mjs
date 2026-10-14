@@ -204,3 +204,10 @@ test('specular-glossiness material model excludes procedural bindings', () => {
   a.materials[0].extensions.KHR_materials_pbrSpecularGlossiness = {};
   assert.ok(validate(a).length);
 });
+
+test('foreign material extension data stays opaque to core texture checks', () => {
+  const a = read('independent-channels');
+  a.extensionsUsed.push('KHR_materials_future');
+  a.materials[0].extensions.KHR_materials_future = { applicationTexture: { index: 999 } };
+  assert.deepEqual(validate(a), []);
+});
