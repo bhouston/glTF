@@ -6,7 +6,15 @@
   "properties": {
     "extras": {},
     "extensions": {
-      "type": "object"
+      "type": "object",
+      "not": {
+        "required": [
+          "EXT_materials_procedural_mx_1_39"
+        ]
+      },
+      "additionalProperties": {
+        "type": "object"
+      }
     },
     "procedurals": {
       "type": "array",
@@ -81,7 +89,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "uiname": {
           "type": "string"
@@ -443,7 +459,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "uiname": {
           "type": "string"
@@ -871,7 +895,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "uiname": {
           "type": "string"
@@ -1208,7 +1240,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "uiname": {
           "type": "string"
@@ -1234,7 +1274,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "uiname": {
           "type": "string"
@@ -1304,7 +1352,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "uiname": {
           "type": "string"
@@ -1375,7 +1431,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "uiname": {
           "type": "string"
@@ -1440,7 +1504,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "uiname": {
           "type": "string"
@@ -1500,7 +1572,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "uiname": {
           "type": "string"
@@ -1530,7 +1610,8 @@
           "minLength": 1
         },
         "defaultVersion": {
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         },
         "nodegroup": {
           "type": "string",

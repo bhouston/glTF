@@ -101,6 +101,9 @@
         "required": [
           "EXT_materials_procedural_mx_1_39"
         ]
+      },
+      "additionalProperties": {
+        "type": "object"
       }
     },
     "materials": {
@@ -119,6 +122,9 @@
               "required": [
                 "EXT_materials_procedural_mx_1_39"
               ]
+            },
+            "additionalProperties": {
+              "type": "object"
             }
           },
           "pbrMetallicRoughness": {
@@ -142,6 +148,9 @@
                           ]
                         }
                       ]
+                    },
+                    "additionalProperties": {
+                      "type": "object"
                     }
                   }
                 }
@@ -164,8 +173,22 @@
                           ]
                         }
                       ]
+                    },
+                    "additionalProperties": {
+                      "type": "object"
                     }
                   }
+                }
+              },
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
                 }
               }
             }
@@ -188,6 +211,9 @@
                       ]
                     }
                   ]
+                },
+                "additionalProperties": {
+                  "type": "object"
                 }
               }
             }
@@ -210,6 +236,9 @@
                       ]
                     }
                   ]
+                },
+                "additionalProperties": {
+                  "type": "object"
                 }
               }
             }
@@ -232,6 +261,9 @@
                       ]
                     }
                   ]
+                },
+                "additionalProperties": {
+                  "type": "object"
                 }
               }
             }
@@ -248,7 +280,10 @@
                   "required": [
                     "KHR_materials_unlit",
                     "KHR_materials_procedural"
-                  ]
+                  ],
+                  "additionalProperties": {
+                    "type": "object"
+                  }
                 }
               }
             },
@@ -268,7 +303,25 @@
                         }
                       }
                     }
+                  },
+                  "additionalProperties": {
+                    "type": "object"
                   }
+                }
+              }
+            }
+          },
+          {
+            "not": {
+              "required": [
+                "extensions"
+              ],
+              "properties": {
+                "extensions": {
+                  "required": [
+                    "KHR_materials_procedural",
+                    "KHR_materials_pbrSpecularGlossiness"
+                  ]
                 }
               }
             }
@@ -296,6 +349,9 @@
                   ]
                 }
               ]
+            },
+            "additionalProperties": {
+              "type": "object"
             }
           }
         }
@@ -321,6 +377,368 @@
                   ]
                 }
               ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "properties": {
+        "extensions": {
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "accessors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "sparse": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              },
+              "indices": {
+                "type": "object",
+                "properties": {
+                  "extensions": {
+                    "type": "object",
+                    "not": {
+                      "required": [
+                        "EXT_materials_procedural_mx_1_39"
+                      ]
+                    },
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                }
+              },
+              "values": {
+                "type": "object",
+                "properties": {
+                  "extensions": {
+                    "type": "object",
+                    "not": {
+                      "required": [
+                        "EXT_materials_procedural_mx_1_39"
+                      ]
+                    },
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "animations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "extensions": {
+                  "type": "object",
+                  "not": {
+                    "required": [
+                      "EXT_materials_procedural_mx_1_39"
+                    ]
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                },
+                "target": {
+                  "type": "object",
+                  "properties": {
+                    "extensions": {
+                      "type": "object",
+                      "not": {
+                        "required": [
+                          "EXT_materials_procedural_mx_1_39"
+                        ]
+                      },
+                      "additionalProperties": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "samplers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "extensions": {
+                  "type": "object",
+                  "not": {
+                    "required": [
+                      "EXT_materials_procedural_mx_1_39"
+                    ]
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "buffers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "bufferViews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "cameras": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "perspective": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "orthographic": {
+            "type": "object",
+            "properties": {
+              "extensions": {
+                "type": "object",
+                "not": {
+                  "required": [
+                    "EXT_materials_procedural_mx_1_39"
+                  ]
+                },
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "meshes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "primitives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "extensions": {
+                  "type": "object",
+                  "not": {
+                    "required": [
+                      "EXT_materials_procedural_mx_1_39"
+                    ]
+                  },
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "samplers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "skins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "extensions": {
+            "type": "object",
+            "not": {
+              "required": [
+                "EXT_materials_procedural_mx_1_39"
+              ]
+            },
+            "additionalProperties": {
+              "type": "object"
             }
           }
         }
@@ -330,51 +748,5 @@
   "required": [
     "extensionsUsed",
     "extensions"
-  ],
-  "definitions": {
-    "noCompanionPayload": {
-      "if": {
-        "type": "object"
-      },
-      "then": {
-        "properties": {
-          "extensions": {
-            "if": {
-              "type": "object"
-            },
-            "then": {
-              "not": {
-                "required": [
-                  "EXT_materials_procedural_mx_1_39"
-                ]
-              }
-            },
-            "allOf": [
-              {
-                "$ref": "#/definitions/noCompanionPayload"
-              }
-            ]
-          }
-        },
-        "additionalProperties": {
-          "$ref": "#/definitions/noCompanionPayload"
-        }
-      },
-      "else": {
-        "if": {
-          "type": "array"
-        },
-        "then": {
-          "items": {
-            "$ref": "#/definitions/noCompanionPayload"
-          }
-        }
-      }
-    }
-  },
-  "allOf": [
-    {
-      "$ref": "#/definitions/noCompanionPayload"
-    }
   ]
 }

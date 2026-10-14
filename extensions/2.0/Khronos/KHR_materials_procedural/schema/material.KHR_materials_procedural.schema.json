@@ -6,7 +6,15 @@
   "properties": {
     "extras": {},
     "extensions": {
-      "type": "object"
+      "type": "object",
+      "not": {
+        "required": [
+          "EXT_materials_procedural_mx_1_39"
+        ]
+      },
+      "additionalProperties": {
+        "type": "object"
+      }
     },
     "bindings": {
       "type": "object",
@@ -47,7 +55,15 @@
       "properties": {
         "extras": {},
         "extensions": {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "EXT_materials_procedural_mx_1_39"
+            ]
+          },
+          "additionalProperties": {
+            "type": "object"
+          }
         },
         "index": {
           "type": "integer",
