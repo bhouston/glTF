@@ -193,6 +193,8 @@ Let `M` be the current mesh instance's object-to-world transform: the node's glo
 
 `transformpoint`, `transformvector`, and `transformnormal` use the same `M` and inverse when converting between `object` and `world`. Points include translation; vectors do not; normals use inverse transpose and normalization. A requested inverse **MUST** exist. These transformations convert coordinate frames; they do not apply skinning a second time.
 
+This profile does not define geometry-node evaluation on a node using both skinning and `EXT_mesh_gpu_instancing`. Such evaluation is unsupported and follows the required-extension rules. Graphs that do not access geometry are unaffected.
+
 ## Custom functional definitions
 
 `procedural_definitions` is one array containing definition (`nodetype: "nodedef"`) entries and functional implementation (`nodetype: "nodegraph"`) entries. A definition contains `node`, optional `name`, optional `version` and `defaultVersion` (default false), optional `nodegroup`, an input-default map, and a nonempty output-description map. Every definition input **MUST** have a typed default value. An empty string is allowed as a filename default only on a definition; every reachable instance **MUST** override such a default with a texture resource. This permits conversion of MaterialX filename interfaces without permitting unresolved files at runtime.
