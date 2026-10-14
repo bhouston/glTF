@@ -161,7 +161,7 @@ export function validate(asset) {
         if (Object.keys(n.outputs).length !== Object.keys(d.outputs).length || Object.entries(n.outputs).some(([name, p]) => p.type !== d.outputs[name]?.type)) fail(`${ctx}: custom outputs mismatch`);
         for (const [name, p] of Object.entries(n.inputs ?? {})) if (d.inputs?.[name]?.type !== p.type) fail(`${ctx}: custom input mismatch`);
         for (const [name, p] of Object.entries(d.inputs ?? {})) if (p.type === 'filename' && !n.inputs?.[name]) fail(`${ctx}: filename default must be overridden`);
-        if (g.nodedef !== undefined) dependencies[g.nodedef].push(n.nodedef);
+        if (g.nodedef !== undefined) dependencies[g.nodedef]?.push(n.nodedef);
       } else { const def = checkStandard(n, ctx, fail); if (def) selected.set(n, def); }
     });
     cycleCheck(edges, `${label}: cyclic node graph`, fail);
@@ -173,6 +173,8 @@ export function validate(asset) {
     graphCheck(g, `definitions/${i}`, def?.inputs ?? {});
   } });
   cycleCheck(dependencies, 'Recursive custom definitions', fail);
+  // Do not evaluate contexts after invalid references or cyclic definitions.
+  if (errors.length) return errors;
   // Validate uniform/enum constraints in root contexts, including custom instances.
   function contextVisit(g, env, primitive, outputs = Object.values(g.outputs), seen = new Set()) {
     function visit(p) {
@@ -221,8 +223,11 @@ export function validate(asset) {
   }
   const animationTargets = new WeakMap();
   for (const animation of asset.animations ?? []) for (const channel of animation.channels) {
-    const pointer = channel.target.extensions?.KHR_animation_pointer?.pointer;
-    if (!pointer?.startsWith(`/extensions/${KHR}/`)) continue;
+    const pointerExtension = channel.target.extensions?.KHR_animation_pointer;
+    if (pointerExtension === undefined) continue;
+    const pointer = pointerExtension?.pointer;
+    if (typeof pointer !== 'string') { fail('Invalid animation pointer extension object'); continue; }
+    if (pointer !== `/extensions/${KHR}` && !pointer.startsWith(`/extensions/${KHR}/`)) continue;
     if (!animationTargets.has(animation)) animationTargets.set(animation, new Set());
     const targets = animationTargets.get(animation);
     if (targets.has(pointer)) fail('Duplicate procedural animation target');

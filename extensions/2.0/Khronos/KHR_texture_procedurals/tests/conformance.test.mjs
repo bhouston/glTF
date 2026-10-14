@@ -154,3 +154,25 @@ test('reject nonzero tangent stream index', () => assert.ok(validate(tangentAsse
 test('reject unsupported geometry coordinate space', () => { const a = tangentAsset(); root(a).procedurals[0].nodes[0].inputs.space = literalInput('string','model'); assert.ok(validate(a).some(e => e.includes('invalid space mode'))); });
 test('reject fallback texture index out of range', () => { const a = read('independent-channels'); a.materials[0].pbrMetallicRoughness.baseColorTexture = { index: 100 }; assert.ok(validate(a).some(e => e.includes('fallback'))); });
 test('reject out of range codec-extension image source', () => { const a = read('image-resource'); a.extensionsUsed.push('KHR_texture_basisu'); a.textures[0] = { extensions: { KHR_texture_basisu: { source: 100 } } }; assert.ok(validate(a).some(e => e.includes('texture/image'))); });
+
+test('out of range implementation definition returns diagnostics without throwing', () => {
+  const a = read('custom-definition'), impl = root(a).procedural_definitions[1];
+  impl.nodedef = 999;
+  impl.nodes = [structuredClone(root(a).procedurals[0].nodes[0])];
+  impl.outputs.out = { nodetype: 'output', type: 'float', node: 0, output: 'out' };
+  assert.ok(validate(a).some(e => e.includes('invalid nodedef')));
+});
+
+test('malformed animation extension returns diagnostics without throwing', () => {
+  for (const pointer of [123, {}, null, undefined]) {
+    const a = read('animated-interface');
+    a.animations[0].channels[0].target.extensions.KHR_animation_pointer = { pointer };
+    assert.ok(validate(a).some(e => e.includes('Invalid animation pointer extension')));
+  }
+});
+
+test('root procedural object cannot be animated', () => {
+  const a = read('animated-interface');
+  a.animations[0].channels[0].target.extensions.KHR_animation_pointer.pointer = '/extensions/KHR_texture_procedurals';
+  assert.ok(validate(a).some(e => e.includes('Invalid procedural animation target')));
+});
