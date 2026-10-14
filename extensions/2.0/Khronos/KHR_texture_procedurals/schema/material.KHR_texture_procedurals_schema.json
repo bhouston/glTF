@@ -348,7 +348,12 @@
                   "EXT_texture_procedurals_mx_1_39"
                 ]
               }
-            }
+            },
+            "allOf": [
+              {
+                "$ref": "#/definitions/noCompanionPayload"
+              }
+            ]
           }
         },
         "additionalProperties": {
