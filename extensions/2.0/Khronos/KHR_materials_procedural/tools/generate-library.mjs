@@ -51,7 +51,7 @@ for (const source of sources) {
       if (p.enum && p.type === 'string') input.enum = p.enum.split(',').map(s => s.trim());
       // Numeric enumvalues describe UI choices, not necessarily a closed range.
       if (['space', 'fromspace', 'tospace'].includes(p.name) && (geometry.has(d.node) || ['transformpoint', 'transformvector', 'transformnormal'].includes(d.node))) input.enum = ['object', 'world'];
-      if (p.name === 'framerange' && ['image', 'tiledimage'].includes(d.node)) input.enum = [''];
+      if (p.name === 'framerange' && ['image', 'tiledimage', 'triplanarprojection'].includes(d.node)) input.enum = [''];
       entry.inputs[p.name] = input;
     }
     for (const p of outputs) entry.outputs[p.name] = convertType(p.type);

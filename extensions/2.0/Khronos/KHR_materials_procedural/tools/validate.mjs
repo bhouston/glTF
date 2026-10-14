@@ -50,7 +50,13 @@ export function validate(asset) {
   function checkLocations(value, location = []) {
     if (!value || typeof value !== 'object') return;
     if (!Array.isArray(value) && value.extensions?.[KHR] && !(location.length === 0 || (location.length === 2 && location[0] === 'materials' && Number.isInteger(location[1])))) fail(`Procedural payload at invalid location /${location.join('/')}`);
-    for (const [key, child] of Object.entries(value)) checkLocations(child, [...location, Array.isArray(value) ? Number(key) : key]);
+    for (const [key, child] of Object.entries(value)) {
+      if (key === 'extras') continue;
+      if (key === 'extensions') {
+        // Foreign extension payloads are opaque application-defined objects.
+        if (child?.[KHR]) checkLocations(child[KHR], [...location, key, KHR]);
+      } else checkLocations(child, [...location, Array.isArray(value) ? Number(key) : key]);
+    }
   }
   checkLocations(asset);
   const root = asset.extensions?.[KHR];
@@ -216,6 +222,7 @@ export function validate(asset) {
     g.nodes.forEach((n, i) => contextVisit(g, env, null, [{ node: i, output: Object.keys(n.outputs)[0] }]));
   });
   for (const [i, m] of (asset.materials ?? []).entries()) for (const [name, b] of Object.entries(m.extensions?.[KHR]?.bindings ?? {})) {
+    if (m.extensions?.KHR_materials_pbrSpecularGlossiness) fail('Procedural materials cannot use KHR_materials_pbrSpecularGlossiness');
     if (root.procedurals[b.index]?.outputs?.[b.output]?.type !== channels[name]) fail(`material/${i}/${name}: channel type/reference mismatch`);
     if (m.extensions?.KHR_materials_unlit && !['baseColor', 'opacity'].includes(name)) fail('Unlit material uses lit channel');
     const g = root.procedurals[b.index];

@@ -183,3 +183,24 @@ test('root procedural object cannot be animated', () => {
   a.animations[0].channels[0].target.extensions.KHR_animation_pointer.pointer = '/extensions/KHR_materials_procedural';
   assert.ok(validate(a).some(e => e.includes('Invalid procedural animation target')));
 });
+
+test('reject triplanar image sequences', () => {
+  const a = read('image-resource'), g = root(a).procedurals[0];
+  const file = { nodetype: 'input', type: 'filename', texture: 0 };
+  g.nodes = [atomic('triplanarprojection', 'color3', {
+    filex: file, filey: file, filez: file,
+    position: literalInput('vector3', [0, 0, 0]),
+    normal: literalInput('vector3', [0, 0, 1])
+  })];
+  g.outputs.out.node = 0;
+  assert.deepEqual(validate(a), []);
+  g.nodes[0].inputs.framerange = literalInput('string', '1-10');
+  assert.ok(validate(a).some(e => e.includes('invalid framerange mode')));
+});
+
+test('specular-glossiness material model excludes procedural bindings', () => {
+  const a = read('independent-channels');
+  a.extensionsUsed.push('KHR_materials_pbrSpecularGlossiness');
+  a.materials[0].extensions.KHR_materials_pbrSpecularGlossiness = {};
+  assert.ok(validate(a).length);
+});
