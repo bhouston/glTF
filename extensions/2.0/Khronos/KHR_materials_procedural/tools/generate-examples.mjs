@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { pixelPNG } from './png.mjs';
 const directory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../examples');
 fs.mkdirSync(directory, { recursive: true });
-const K = 'KHR_texture_procedurals', M = 'EXT_texture_procedurals_mx_1_39';
+const K = 'KHR_materials_procedural', M = 'EXT_materials_procedural_mx_1_39';
 const val = (type, value) => ({ nodetype: 'input', type, value });
 const link = (type, node) => ({ nodetype: 'input', type, node, output: 'out' });
 const port = type => ({ nodetype: 'output', type });
@@ -15,7 +15,7 @@ const atomic = (nodetype, type, inputs) => ({ nodetype, type, inputs, outputs: {
 const graph = (nodes, outputs, inputs = {}) => ({ nodetype: 'nodegraph', type: Object.keys(outputs).length === 1 ? Object.values(outputs)[0].type : 'multioutput', inputs, nodes, outputs });
 const scalar = x => atomic('constant', 'float', { value: val('float', [x]) });
 function asset(g, bindings) {
-  return { asset: { version: '2.0', generator: 'KHR_texture_procedurals fixtures' }, extensionsUsed: [K, M], extensions: { [K]: { procedurals: [g] } }, materials: [{ pbrMetallicRoughness: { baseColorFactor: [0.5, 0.5, 0.5, 1], metallicFactor: 0.2, roughnessFactor: 0.8 }, extensions: { [K]: { bindings } } }] };
+  return { asset: { version: '2.0', generator: 'KHR_materials_procedural fixtures' }, extensionsUsed: [K, M], extensions: { [K]: { procedurals: [g] } }, materials: [{ pbrMetallicRoughness: { baseColorFactor: [0.5, 0.5, 0.5, 1], metallicFactor: 0.2, roughnessFactor: 0.8 }, extensions: { [K]: { bindings } } }] };
 }
 const binding = output => ({ index: 0, output });
 function save(name, a) {

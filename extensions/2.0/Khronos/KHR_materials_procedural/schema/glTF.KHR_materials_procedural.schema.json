@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$comment": "Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: Apache-2.0",
-  "title": "KHR_texture_procedurals root extension",
+  "title": "KHR_materials_procedural root extension",
   "type": "object",
   "properties": {
     "extras": {},

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$comment": "Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: Apache-2.0",
-  "title": "KHR_texture_procedurals whole-document overlay",
+  "title": "KHR_materials_procedural whole-document overlay",
   "description": "Apply alongside the core glTF 2.0 schema. Semantic reference, library signature, graph type, and cycle validation is also required. Required identifiers must also be a subset of extensionsUsed; this cross-array constraint is validated semantically.",
   "type": "object",
   "properties": {
@@ -12,11 +12,11 @@
         "not": {
           "allOf": [
             {
-              "pattern": "^EXT_texture_procedurals_mx_"
+              "pattern": "^EXT_materials_procedural_mx_"
             },
             {
               "not": {
-                "const": "EXT_texture_procedurals_mx_1_39"
+                "const": "EXT_materials_procedural_mx_1_39"
               }
             }
           ]
@@ -26,12 +26,12 @@
       "allOf": [
         {
           "contains": {
-            "const": "KHR_texture_procedurals"
+            "const": "KHR_materials_procedural"
           }
         },
         {
           "contains": {
-            "const": "EXT_texture_procedurals_mx_1_39"
+            "const": "EXT_materials_procedural_mx_1_39"
           }
         }
       ]
@@ -43,11 +43,11 @@
         "not": {
           "allOf": [
             {
-              "pattern": "^EXT_texture_procedurals_mx_"
+              "pattern": "^EXT_materials_procedural_mx_"
             },
             {
               "not": {
-                "const": "EXT_texture_procedurals_mx_1_39"
+                "const": "EXT_materials_procedural_mx_1_39"
               }
             }
           ]
@@ -60,12 +60,12 @@
             "anyOf": [
               {
                 "contains": {
-                  "const": "KHR_texture_procedurals"
+                  "const": "KHR_materials_procedural"
                 }
               },
               {
                 "contains": {
-                  "const": "EXT_texture_procedurals_mx_1_39"
+                  "const": "EXT_materials_procedural_mx_1_39"
                 }
               }
             ]
@@ -74,12 +74,12 @@
             "allOf": [
               {
                 "contains": {
-                  "const": "KHR_texture_procedurals"
+                  "const": "KHR_materials_procedural"
                 }
               },
               {
                 "contains": {
-                  "const": "EXT_texture_procedurals_mx_1_39"
+                  "const": "EXT_materials_procedural_mx_1_39"
                 }
               }
             ]
@@ -90,16 +90,16 @@
     "extensions": {
       "type": "object",
       "properties": {
-        "KHR_texture_procedurals": {
-          "$ref": "glTF.KHR_texture_procedurals.schema.json"
+        "KHR_materials_procedural": {
+          "$ref": "glTF.KHR_materials_procedural.schema.json"
         }
       },
       "required": [
-        "KHR_texture_procedurals"
+        "KHR_materials_procedural"
       ],
       "not": {
         "required": [
-          "EXT_texture_procedurals_mx_1_39"
+          "EXT_materials_procedural_mx_1_39"
         ]
       }
     },
@@ -111,13 +111,13 @@
           "extensions": {
             "type": "object",
             "properties": {
-              "KHR_texture_procedurals": {
-                "$ref": "material.KHR_texture_procedurals.schema.json"
+              "KHR_materials_procedural": {
+                "$ref": "material.KHR_materials_procedural.schema.json"
               }
             },
             "not": {
               "required": [
-                "EXT_texture_procedurals_mx_1_39"
+                "EXT_materials_procedural_mx_1_39"
               ]
             }
           },
@@ -133,12 +133,12 @@
                       "anyOf": [
                         {
                           "required": [
-                            "KHR_texture_procedurals"
+                            "KHR_materials_procedural"
                           ]
                         },
                         {
                           "required": [
-                            "EXT_texture_procedurals_mx_1_39"
+                            "EXT_materials_procedural_mx_1_39"
                           ]
                         }
                       ]
@@ -155,12 +155,12 @@
                       "anyOf": [
                         {
                           "required": [
-                            "KHR_texture_procedurals"
+                            "KHR_materials_procedural"
                           ]
                         },
                         {
                           "required": [
-                            "EXT_texture_procedurals_mx_1_39"
+                            "EXT_materials_procedural_mx_1_39"
                           ]
                         }
                       ]
@@ -179,12 +179,12 @@
                   "anyOf": [
                     {
                       "required": [
-                        "KHR_texture_procedurals"
+                        "KHR_materials_procedural"
                       ]
                     },
                     {
                       "required": [
-                        "EXT_texture_procedurals_mx_1_39"
+                        "EXT_materials_procedural_mx_1_39"
                       ]
                     }
                   ]
@@ -201,12 +201,12 @@
                   "anyOf": [
                     {
                       "required": [
-                        "KHR_texture_procedurals"
+                        "KHR_materials_procedural"
                       ]
                     },
                     {
                       "required": [
-                        "EXT_texture_procedurals_mx_1_39"
+                        "EXT_materials_procedural_mx_1_39"
                       ]
                     }
                   ]
@@ -223,12 +223,12 @@
                   "anyOf": [
                     {
                       "required": [
-                        "KHR_texture_procedurals"
+                        "KHR_materials_procedural"
                       ]
                     },
                     {
                       "required": [
-                        "EXT_texture_procedurals_mx_1_39"
+                        "EXT_materials_procedural_mx_1_39"
                       ]
                     }
                   ]
@@ -247,7 +247,7 @@
                 "extensions": {
                   "required": [
                     "KHR_materials_unlit",
-                    "KHR_texture_procedurals"
+                    "KHR_materials_procedural"
                   ]
                 }
               }
@@ -256,7 +256,7 @@
               "properties": {
                 "extensions": {
                   "properties": {
-                    "KHR_texture_procedurals": {
+                    "KHR_materials_procedural": {
                       "properties": {
                         "bindings": {
                           "propertyNames": {
@@ -287,12 +287,12 @@
               "anyOf": [
                 {
                   "required": [
-                    "KHR_texture_procedurals"
+                    "KHR_materials_procedural"
                   ]
                 },
                 {
                   "required": [
-                    "EXT_texture_procedurals_mx_1_39"
+                    "EXT_materials_procedural_mx_1_39"
                   ]
                 }
               ]
@@ -312,12 +312,12 @@
               "anyOf": [
                 {
                   "required": [
-                    "KHR_texture_procedurals"
+                    "KHR_materials_procedural"
                   ]
                 },
                 {
                   "required": [
-                    "EXT_texture_procedurals_mx_1_39"
+                    "EXT_materials_procedural_mx_1_39"
                   ]
                 }
               ]
@@ -345,7 +345,7 @@
             "then": {
               "not": {
                 "required": [
-                  "EXT_texture_procedurals_mx_1_39"
+                  "EXT_materials_procedural_mx_1_39"
                 ]
               }
             },

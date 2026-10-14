@@ -1,5 +1,5 @@
 {
-  "name": "khr-texture-procedurals-conformance",
+  "name": "khr-materials-procedural-conformance",
   "private": true,
   "type": "module",
   "license": "Apache-2.0",

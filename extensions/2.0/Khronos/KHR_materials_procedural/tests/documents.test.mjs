@@ -9,10 +9,10 @@ import { directory, validate } from '../tools/validate.mjs';
 
 const documents = [
   path.join(directory, 'README.md'),
-  path.resolve(directory, '../../Vendor/EXT_texture_procedurals_mx_1_39/README.md')
+  path.resolve(directory, '../../Vendor/EXT_materials_procedural_mx_1_39/README.md')
 ];
 const ajv = new Ajv({ strict: false, strictNumbers: true, allErrors: true });
-const schema = JSON.parse(fs.readFileSync(path.join(directory, 'schema/glTF.KHR_texture_procedurals.schema.json'), 'utf8'));
+const schema = JSON.parse(fs.readFileSync(path.join(directory, 'schema/glTF.KHR_materials_procedural.schema.json'), 'utf8'));
 ajv.addSchema(schema, 'root');
 const graph = ajv.compile({ $ref: 'root#/definitions/nodegraph' });
 

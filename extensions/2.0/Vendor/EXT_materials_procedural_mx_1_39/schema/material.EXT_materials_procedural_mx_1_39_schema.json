@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: Apache-2.0",
+  "title": "EXT_materials_procedural_mx_1_39 whole-document overlay",
+  "$ref": "../../../Khronos/KHR_materials_procedural/schema/material.KHR_materials_procedural_schema.json"
+}

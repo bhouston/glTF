@@ -1,18 +1,18 @@
 {
   "asset": {
     "version": "2.0",
-    "generator": "KHR_texture_procedurals fixtures",
+    "generator": "KHR_materials_procedural fixtures",
     "extras": {
       "copyright": "Copyright 2026 The Khronos Group Inc.",
       "license": "Apache-2.0"
     }
   },
   "extensionsUsed": [
-    "KHR_texture_procedurals",
-    "EXT_texture_procedurals_mx_1_39"
+    "KHR_materials_procedural",
+    "EXT_materials_procedural_mx_1_39"
   ],
   "extensions": {
-    "KHR_texture_procedurals": {
+    "KHR_materials_procedural": {
       "procedurals": [
         {
           "nodetype": "nodegraph",
@@ -90,7 +90,7 @@
         "roughnessFactor": 0.8
       },
       "extensions": {
-        "KHR_texture_procedurals": {
+        "KHR_materials_procedural": {
           "bindings": {
             "roughness": {
               "index": 0,

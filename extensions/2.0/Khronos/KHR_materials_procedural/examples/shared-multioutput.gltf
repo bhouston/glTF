@@ -1,71 +1,73 @@
 {
   "asset": {
     "version": "2.0",
-    "generator": "KHR_texture_procedurals fixtures",
+    "generator": "KHR_materials_procedural fixtures",
     "extras": {
       "copyright": "Copyright 2026 The Khronos Group Inc.",
       "license": "Apache-2.0"
     }
   },
   "extensionsUsed": [
-    "KHR_texture_procedurals",
-    "EXT_texture_procedurals_mx_1_39"
+    "KHR_materials_procedural",
+    "EXT_materials_procedural_mx_1_39"
   ],
   "extensions": {
-    "KHR_texture_procedurals": {
+    "KHR_materials_procedural": {
       "procedurals": [
         {
           "nodetype": "nodegraph",
-          "type": "color3",
+          "type": "multioutput",
           "inputs": {},
           "nodes": [
             {
-              "nodetype": "texcoord",
-              "type": "vector2",
+              "nodetype": "constant",
+              "type": "float",
               "inputs": {
-                "index": {
+                "value": {
                   "nodetype": "input",
-                  "type": "integer",
+                  "type": "float",
                   "value": [
-                    0
+                    0.15
                   ]
                 }
               },
               "outputs": {
                 "out": {
                   "nodetype": "output",
-                  "type": "vector2"
+                  "type": "float"
                 }
               }
             },
             {
-              "nodetype": "image",
-              "type": "color3",
+              "nodetype": "constant",
+              "type": "float",
               "inputs": {
-                "file": {
+                "value": {
                   "nodetype": "input",
-                  "type": "filename",
-                  "texture": 0
-                },
-                "texcoord": {
-                  "nodetype": "input",
-                  "type": "vector2",
-                  "node": 0,
-                  "output": "out"
+                  "type": "float",
+                  "value": [
+                    0.85
+                  ]
                 }
               },
               "outputs": {
                 "out": {
                   "nodetype": "output",
-                  "type": "color3"
+                  "type": "float"
                 }
               }
             }
           ],
           "outputs": {
-            "out": {
+            "metal": {
               "nodetype": "output",
-              "type": "color3",
+              "type": "float",
+              "node": 0,
+              "output": "out"
+            },
+            "rough": {
+              "nodetype": "output",
+              "type": "float",
               "node": 1,
               "output": "out"
             }
@@ -87,25 +89,45 @@
         "roughnessFactor": 0.8
       },
       "extensions": {
-        "KHR_texture_procedurals": {
+        "KHR_materials_procedural": {
           "bindings": {
-            "baseColor": {
+            "metallic": {
               "index": 0,
-              "output": "out"
+              "output": "metal"
+            },
+            "roughness": {
+              "index": 0,
+              "output": "rough"
             }
           }
         }
       }
-    }
-  ],
-  "textures": [
+    },
     {
-      "source": 0
-    }
-  ],
-  "images": [
-    {
-      "uri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC"
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "metallicFactor": 0.2,
+        "roughnessFactor": 0.8
+      },
+      "extensions": {
+        "KHR_materials_procedural": {
+          "bindings": {
+            "metallic": {
+              "index": 0,
+              "output": "metal"
+            },
+            "roughness": {
+              "index": 0,
+              "output": "rough"
+            }
+          }
+        }
+      }
     }
   ],
   "buffers": [

@@ -1,6 +1,6 @@
 <!-- Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: CC-BY-4.0 -->
 
-# EXT_texture_procedurals_mx_1_39
+# EXT_materials_procedural_mx_1_39
 
 ## Contributors
 
@@ -15,24 +15,24 @@
 
 ## Status
 
-Draft. This is the MaterialX profile for the revised [KHR_texture_procedurals](../../Khronos/KHR_texture_procedurals/README.md) material-channel graph format. It is not a declaration that the complete MaterialX ecosystem or a new material model is supported.
+Draft. This is the MaterialX profile for the revised [KHR_materials_procedural](../../Khronos/KHR_materials_procedural/README.md) material-channel graph format. It is not a declaration that the complete MaterialX ecosystem or a new material model is supported.
 
 ## Dependencies
 
-Written against glTF 2.0 and `KHR_texture_procedurals`. Normative node definitions and semantics are pinned to [MaterialX v1.39.0](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0), commit `f679db7875a928fd0162cd38bdc7461b2aa81c0f`. A later patch release MUST NOT silently change the semantics of this profile. A future incompatible profile requires a new extension identifier.
+Written against glTF 2.0 and `KHR_materials_procedural`. Normative node definitions and semantics are pinned to [MaterialX v1.39.0](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0), commit `f679db7875a928fd0162cd38bdc7461b2aa81c0f`. A later patch release MUST NOT silently change the semantics of this profile. A future incompatible profile requires a new extension identifier.
 
 ## Declaration
 
-Both `KHR_texture_procedurals` and `EXT_texture_procedurals_mx_1_39` MUST be listed in `extensionsUsed`. The library applies to every procedural graph and custom functional definition in the asset. More than one `EXT_texture_procedurals_mx_*` identifier is invalid, including in `extensionsRequired`. If either identifier is required, both MUST be required. Other library profiles cannot be combined with this one.
+Both `KHR_materials_procedural` and `EXT_materials_procedural_mx_1_39` MUST be listed in `extensionsUsed`. The library applies to every procedural graph and custom functional definition in the asset. More than one `EXT_materials_procedural_mx_*` identifier is invalid, including in `extensionsRequired`. If either identifier is required, both MUST be required. Other library profiles cannot be combined with this one.
 
 ```json
 {
   "asset": { "version": "2.0" },
-  "extensionsUsed": ["KHR_texture_procedurals", "EXT_texture_procedurals_mx_1_39"],
-  "extensionsRequired": ["KHR_texture_procedurals", "EXT_texture_procedurals_mx_1_39"],
+  "extensionsUsed": ["KHR_materials_procedural", "EXT_materials_procedural_mx_1_39"],
+  "extensionsRequired": ["KHR_materials_procedural", "EXT_materials_procedural_mx_1_39"],
   "materials": [{
     "extensions": {
-      "KHR_texture_procedurals": {
+      "KHR_materials_procedural": {
         "bindings": {
           "metallic": { "index": 0, "output": "metallic" },
           "roughness": { "index": 0, "output": "roughness" }
@@ -41,7 +41,7 @@ Both `KHR_texture_procedurals` and `EXT_texture_procedurals_mx_1_39` MUST be lis
     }
   }],
   "extensions": {
-    "KHR_texture_procedurals": {
+    "KHR_materials_procedural": {
       "procedurals": [{
         "nodetype": "nodegraph",
         "type": "multioutput",
@@ -101,16 +101,16 @@ MaterialX surface-model translations that can be expressed as valid pattern grap
 
 ## Validation and examples
 
-The [document declaration schema](schema/material.EXT_texture_procedurals_mx_1_39_schema.json) validates the required paired identifiers; it is not a schema for a companion payload or proof of node execution semantics. Use the base extension schemas, core glTF schemas and semantic checks as well.
+The [document declaration schema](schema/material.EXT_materials_procedural_mx_1_39_schema.json) validates the required paired identifiers; it is not a schema for a companion payload or proof of node execution semantics. Use the base extension schemas, core glTF schemas and semantic checks as well.
 
-Examples and validation tools are shared with the base extension: [examples](../../Khronos/KHR_texture_procedurals/examples/) and [validation guide](../../Khronos/KHR_texture_procedurals/tests/README.md). This avoids maintaining a second example with obsolete port-array syntax. Reference numeric fixtures exercise a subset of elementary operations, not full rendering conformance. Independent runtimes and reference renders remain adoption work.
+Examples and validation tools are shared with the base extension: [examples](../../Khronos/KHR_materials_procedural/examples/) and [validation guide](../../Khronos/KHR_materials_procedural/tests/README.md). This avoids maintaining a second example with obsolete port-array syntax. Reference numeric fixtures exercise a subset of elementary operations, not full rendering conformance. Independent runtimes and reference renders remain adoption work.
 
 ## References
 
 - [MaterialX v1.39.0 specification](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0/documents/Specification)
 - [MaterialX v1.39.0 standard definitions](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0/libraries/stdlib)
 - [MaterialX v1.39.0 PBR definitions](https://github.com/AcademySoftwareFoundation/MaterialX/tree/v1.39.0/libraries/pbrlib)
-- [KHR_texture_procedurals](../../Khronos/KHR_texture_procedurals/README.md)
+- [KHR_materials_procedural](../../Khronos/KHR_materials_procedural/README.md)
 
 
 ## Appendix: Full Khronos Copyright Statement

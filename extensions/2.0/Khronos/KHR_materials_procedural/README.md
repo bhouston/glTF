@@ -1,6 +1,6 @@
 <!-- Copyright 2026 The Khronos Group Inc. SPDX-License-Identifier: CC-BY-4.0 -->
 
-# KHR_texture_procedurals
+# KHR_materials_procedural
 
 ## Contributors
 
@@ -25,26 +25,26 @@ This extension represents directed acyclic graphs that compute inputs to glTF's 
 
 This extension does not replace the glTF BRDF. It does not carry BSDFs, EDFs, closures, surface shaders, displacement shaders, renderer-specific shader source, or arbitrary executable code. Core material inputs and the base color/opacity inputs of `KHR_materials_unlit` are covered. Graph binding to inputs introduced by other material extensions requires a separate specification; those extensions retain their ordinary behavior for unbound inputs. The final-emissive rule below explicitly handles the interaction with `KHR_materials_emissive_strength` without adding a separate binding for its strength input.
 
-The graph structure is independent of a particular library. This revision defines one interoperable library profile, [EXT_texture_procedurals_mx_1_39](../../Vendor/EXT_texture_procedurals_mx_1_39/README.md). Assets using this revision **MUST** declare that profile. Future profiles require a separate extension defining their semantics; they are not implied by arbitrary node names. MaterialX compatibility is a design requirement, with a deliberately restricted subset of MaterialX and explicit glTF resource and channel mappings.
+The graph structure is independent of a particular library. This revision defines one interoperable library profile, [EXT_materials_procedural_mx_1_39](../../Vendor/EXT_materials_procedural_mx_1_39/README.md). Assets using this revision **MUST** declare that profile. Future profiles require a separate extension defining their semantics; they are not implied by arbitrary node names. MaterialX compatibility is a design requirement, with a deliberately restricted subset of MaterialX and explicit glTF resource and channel mappings.
 
 ## Declaration
 
-An asset using procedural graphs **MUST** list both `KHR_texture_procedurals` and `EXT_texture_procedurals_mx_1_39` in `extensionsUsed`. Graph payload belongs only to the root `extensions.KHR_texture_procedurals` object. The companion library identifier has no payload, either at the root or on any child object. Exactly one library profile applies to the entire asset.
+An asset using procedural graphs **MUST** list both `KHR_materials_procedural` and `EXT_materials_procedural_mx_1_39` in `extensionsUsed`. Graph payload belongs only to the root `extensions.KHR_materials_procedural` object. The companion library identifier has no payload, either at the root or on any child object. Exactly one library profile applies to the entire asset.
 
 ```json
 {
   "asset": { "version": "2.0" },
-  "extensionsUsed": ["KHR_texture_procedurals", "EXT_texture_procedurals_mx_1_39"],
+  "extensionsUsed": ["KHR_materials_procedural", "EXT_materials_procedural_mx_1_39"],
   "materials": [{
     "pbrMetallicRoughness": { "roughnessFactor": 0.8 },
     "extensions": {
-      "KHR_texture_procedurals": {
+      "KHR_materials_procedural": {
         "bindings": { "roughness": { "index": 0, "output": "roughness" } }
       }
     }
   }],
   "extensions": {
-    "KHR_texture_procedurals": {
+    "KHR_materials_procedural": {
       "procedurals": [{
         "nodetype": "nodegraph",
         "type": "float",
@@ -65,7 +65,7 @@ Standard material factors and textures are the fallback. Textures are optional; 
 
 ## Material-channel binding
 
-Bindings are declared on `materials[i].extensions.KHR_texture_procedurals.bindings`. Each property in this nonempty object names one channel. Its value contains a nonnegative `index` into the root `procedurals` array and an `output` naming a graph output. `output` is always required, including single-output graphs. A graph MAY drive several channels and several materials. A material MAY use several graphs. There is no restriction to one graph per material.
+Bindings are declared on `materials[i].extensions.KHR_materials_procedural.bindings`. Each property in this nonempty object names one channel. Its value contains a nonnegative `index` into the root `procedurals` array and an `output` naming a graph output. `output` is always required, including single-output graphs. A graph MAY drive several channels and several materials. A material MAY use several graphs. There is no restriction to one graph per material.
 
 ```mermaid
 flowchart LR
@@ -199,7 +199,7 @@ Graph-interface inputs of the root `procedurals` array can be animated using [KH
 
 | Property pattern | Asset Object Model type | Output accessor type | Mutable |
 | --- | --- | --- | --- |
-| `/extensions/KHR_texture_procedurals/procedurals/{i}/inputs/{name}/value`, type `float` | `float[]` of fixed length 1 | SCALAR, one value per sample | Yes |
+| `/extensions/KHR_materials_procedural/procedurals/{i}/inputs/{name}/value`, type `float` | `float[]` of fixed length 1 | SCALAR, one value per sample | Yes |
 | Same path, type `vector2` | `float2` | VEC2 | Yes |
 | Same path, type `vector3` or `color3` | `float3` | VEC3 | Yes |
 | Same path, type `vector4` or `color4` | `float4` | VEC4 | Yes |
@@ -211,7 +211,7 @@ The path **MUST** resolve to the entire `value` array of an existing eligible in
   "path": "pointer",
   "extensions": {
     "KHR_animation_pointer": {
-      "pointer": "/extensions/KHR_texture_procedurals/procedurals/0/inputs/amount/value"
+      "pointer": "/extensions/KHR_materials_procedural/procedurals/0/inputs/amount/value"
     }
   }
 }
@@ -221,7 +221,7 @@ This fragment is an animation channel's `target`; a complete asset with accessor
 
 ## Schemas, examples, and validation
 
-Schemas in [schema/](schema/) describe root payloads, material bindings, typed ports and functional definitions. [glTF.KHR_texture_procedurals.schema.json](schema/glTF.KHR_texture_procedurals.schema.json) validates the root payload and [material.KHR_texture_procedurals.schema.json](schema/material.KHR_texture_procedurals.schema.json) validates a material payload. The [whole-document overlay](schema/material.KHR_texture_procedurals_schema.json) additionally enforces extension declaration requirements. Validate core glTF structure with the core schemas as well; extension schemas do not substitute for core validation. The companion declaration schema is applied to the document, not to a nonexistent companion payload.
+Schemas in [schema/](schema/) describe root payloads, material bindings, typed ports and functional definitions. [glTF.KHR_materials_procedural.schema.json](schema/glTF.KHR_materials_procedural.schema.json) validates the root payload and [material.KHR_materials_procedural.schema.json](schema/material.KHR_materials_procedural.schema.json) validates a material payload. The [whole-document overlay](schema/material.KHR_materials_procedural_schema.json) additionally enforces extension declaration requirements. Validate core glTF structure with the core schemas as well; extension schemas do not substitute for core validation. The companion declaration schema is applied to the document, not to a nonexistent companion payload.
 
 Schema validation alone cannot verify array index bounds, DAG acyclicity, custom-definition recursion, resolved port types, node-library overloads/defaults, primitive attributes, runtime value ranges, sampling behavior, or rendered equivalence. A conformant implementation **MUST** validate these semantic requirements as well. Runtime results must be finite; invalid results are evaluation errors subject to the declared required/fallback policy. Geometry/resource checks are performed in every bound primitive context. Unsupported valid operators are distinct from invalid signatures.
 
@@ -247,7 +247,7 @@ Before ratification, the working group still needs to approve this scope/profile
 
 - [glTF 2.0 specification](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html)
 - [KHR_animation_pointer](../KHR_animation_pointer/README.md), when animation is used.
-- [EXT_texture_procedurals_mx_1_39](../../Vendor/EXT_texture_procedurals_mx_1_39/README.md), for the node-library profile.
+- [EXT_materials_procedural_mx_1_39](../../Vendor/EXT_materials_procedural_mx_1_39/README.md), for the node-library profile.
 - [RFC 6901: JSON Pointer](https://www.rfc-editor.org/rfc/rfc6901)
 
 

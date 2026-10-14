@@ -8,7 +8,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { visit } from 'jsonc-parser';
 export const directory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const KHR = 'KHR_texture_procedurals', MX = 'EXT_texture_procedurals_mx_1_39';
+const KHR = 'KHR_materials_procedural', MX = 'EXT_materials_procedural_mx_1_39';
 const channels = { baseColor: 'color3', metallic: 'float', roughness: 'float', opacity: 'float', normal: 'vector3', occlusion: 'float', emissive: 'color3' };
 const library = JSON.parse(fs.readFileSync(path.join(directory, 'tools/materialx-library.json'), 'utf8'));
 const geometry = new Set(['texcoord', 'geomcolor', 'position', 'normal', 'tangent', 'bitangent']);
@@ -19,7 +19,7 @@ function schemaValidator(ctor, dir, entry) {
   // The core schema uses IRI references; resource resolution is outside this tool.
   ajv.addFormat('iri-reference', true);
   const dirs = [dir];
-  if (dir.includes('EXT_texture_procedurals_mx_1_39')) dirs.push(path.join(directory, 'schema'));
+  if (dir.includes('EXT_materials_procedural_mx_1_39')) dirs.push(path.join(directory, 'schema'));
   for (const schemaDir of dirs) for (const name of fs.readdirSync(schemaDir).filter(n => n.endsWith('.json'))) {
     const schema = JSON.parse(fs.readFileSync(path.join(schemaDir, name), 'utf8'));
     const uri = pathToFileURL(path.join(schemaDir, name)).href;
@@ -42,7 +42,7 @@ export function parseAsset(text) {
   return JSON.parse(text);
 }
 export function validate(asset) {
-  validators ??= [schemaValidator(Ajv2020, path.resolve(directory, '../../../../specification/2.0/schema'), 'glTF.schema.json'), schemaValidator(Ajv, path.join(directory, 'schema'), 'material.KHR_texture_procedurals_schema.json'), schemaValidator(Ajv, path.resolve(directory, '../../Vendor/EXT_texture_procedurals_mx_1_39/schema'), 'material.EXT_texture_procedurals_mx_1_39_schema.json')];
+  validators ??= [schemaValidator(Ajv2020, path.resolve(directory, '../../../../specification/2.0/schema'), 'glTF.schema.json'), schemaValidator(Ajv, path.join(directory, 'schema'), 'material.KHR_materials_procedural_schema.json'), schemaValidator(Ajv, path.resolve(directory, '../../Vendor/EXT_materials_procedural_mx_1_39/schema'), 'material.EXT_materials_procedural_mx_1_39_schema.json')];
   const errors = [];
   for (const check of validators) if (!check(asset)) errors.push(...check.errors.map(e => `${e.instancePath}: ${e.message}`));
   if (errors.length) return errors;
@@ -57,7 +57,7 @@ export function validate(asset) {
   if (!root) return errors;
   const used = asset.extensionsUsed ?? [], required = asset.extensionsRequired ?? [];
   if (!used.includes(KHR) || !used.includes(MX)) fail('Both procedural extension identifiers must be used');
-  if (used.some(id => id.startsWith('EXT_texture_procedurals_mx_') && id !== MX)) fail('Only MaterialX 1.39 is supported');
+  if (used.some(id => id.startsWith('EXT_materials_procedural_mx_') && id !== MX)) fail('Only MaterialX 1.39 is supported');
   if (required.includes(KHR) !== required.includes(MX)) fail('Both procedural identifiers must be required together');
   for (const id of required) if (!used.includes(id)) fail('Required extension missing from extensionsUsed');
   const defs = root.procedural_definitions ?? [];
@@ -234,7 +234,7 @@ export function validate(asset) {
     targets.add(pointer);
     if (channel.target.path !== 'pointer' || channel.target.node !== undefined) fail('Invalid animation pointer target object');
     if (!used.includes('KHR_animation_pointer')) fail('Animation pointer extension undeclared');
-    const match = pointer.match(/^\/extensions\/KHR_texture_procedurals\/procedurals\/(0|[1-9][0-9]*)\/inputs\/([^/]+)\/value$/);
+    const match = pointer.match(/^\/extensions\/KHR_materials_procedural\/procedurals\/(0|[1-9][0-9]*)\/inputs\/([^/]+)\/value$/);
     if (!match || /~(?![01])/.test(match[2])) { fail('Invalid procedural animation target'); continue; }
     const name = match[2].replace(/~1/g, '/').replace(/~0/g, '~');
     const p = root.procedurals[Number(match[1])]?.inputs?.[name];

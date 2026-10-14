@@ -10,7 +10,7 @@ import { crc32 } from '../tools/png.mjs';
 import { inflateSync } from 'node:zlib';
 import { spawnSync } from 'node:child_process';
 import os from 'node:os';
-const K = 'KHR_texture_procedurals';
+const K = 'KHR_materials_procedural';
 const read = name => JSON.parse(fs.readFileSync(path.join(directory, 'examples', `${name}.gltf`), 'utf8'));
 const root = a => a.extensions[K];
 for (const name of fs.readdirSync(path.join(directory, 'examples')).filter(n => n.endsWith('.gltf'))) test(`schema + semantics: ${name}`, () => assert.deepEqual(validate(read(name.slice(0, -5))), []));
@@ -24,7 +24,7 @@ test('checkerboard parity including negative coordinates', () => {
 });
 const negatives = {
   'unpaired required declarations': a => { a.extensionsRequired = [K]; },
-  'different MaterialX version': a => { a.extensionsUsed.push('EXT_texture_procedurals_mx_1_38'); },
+  'different MaterialX version': a => { a.extensionsUsed.push('EXT_materials_procedural_mx_1_38'); },
   'out of range graph': a => { a.materials[0].extensions[K].bindings.metallic.index = 100; },
   'nonexistent named output': a => { a.materials[0].extensions[K].bindings.metallic.output = 'missing'; },
   'wrong scalar channel type': a => { a.materials[0].extensions[K].bindings.baseColor = { index: 0, output: 'metal' }; },
@@ -86,7 +86,7 @@ test('reject multiple custom default versions', () => {
   assert.ok(validate(a).some(e => e.includes('Multiple default')));
 });
 test('reject mismatched custom implementation outputs', () => { const a = read('custom-definition'); const outputs = root(a).procedural_definitions[1].outputs; outputs.other = outputs.out; delete outputs.out; assert.ok(validate(a).some(e => e.includes('implementation outputs'))); });
-test('reject invalid RFC6901 escape', () => { const a = read('animated-interface'); a.animations[0].channels[0].target.extensions.KHR_animation_pointer.pointer = '/extensions/KHR_texture_procedurals/procedurals/0/inputs/rough~2amount/value'; assert.ok(validate(a).some(e => e.includes('Invalid procedural animation'))); });
+test('reject invalid RFC6901 escape', () => { const a = read('animated-interface'); a.animations[0].channels[0].target.extensions.KHR_animation_pointer.pointer = '/extensions/KHR_materials_procedural/procedurals/0/inputs/rough~2amount/value'; assert.ok(validate(a).some(e => e.includes('Invalid procedural animation'))); });
 test('reject duplicate animation target in one animation', () => { const a = read('animated-interface'); a.animations[0].channels.push(structuredClone(a.animations[0].channels[0])); assert.ok(validate(a).some(e => e.includes('Duplicate'))); });
 test('allow different animations to target the same input', () => { const a = read('animated-interface'); a.animations.push(structuredClone(a.animations[0])); assert.deepEqual(validate(a), []); });
 test('allow normalized integer pointer output accessor', () => { const a = read('animated-interface'); a.accessors[1].componentType = 5121; a.accessors[1].normalized = true; assert.deepEqual(validate(a), []); });
@@ -173,6 +173,6 @@ test('malformed animation extension returns diagnostics without throwing', () =>
 
 test('root procedural object cannot be animated', () => {
   const a = read('animated-interface');
-  a.animations[0].channels[0].target.extensions.KHR_animation_pointer.pointer = '/extensions/KHR_texture_procedurals';
+  a.animations[0].channels[0].target.extensions.KHR_animation_pointer.pointer = '/extensions/KHR_materials_procedural';
   assert.ok(validate(a).some(e => e.includes('Invalid procedural animation target')));
 });
