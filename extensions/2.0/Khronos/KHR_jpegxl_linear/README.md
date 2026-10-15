@@ -37,7 +37,7 @@ The extension **MUST** be listed in `extensionsUsed`. Its `source` **MUST** refe
 
 The texture's `sampler` and all texture binding properties retain their usual meanings. Mipmaps, when needed, are generated from decoded linear samples; this extension does not define stored mip levels, arrays, or cubemaps.
 
-### Optional PNG or JPEG fallback
+The following example selects `emission.jxl` in clients that support this extension, with an optional PNG image for other clients.
 
 ```json
 {
@@ -54,13 +54,13 @@ The texture's `sampler` and all texture binding properties retain their usual me
 }
 ```
 
-A supporting client **MUST** select the extension image when it can decode and use it. If support is unavailable and the extension is not required, the client **MUST** use the core `texture.source`. A client **MAY** also use that fallback after a JPEG XL loading or decoding failure. The fallback **MUST** be a core PNG or JPEG image and follows core color-space rules, including sRGB decoding for color textures. It does not inherit this extension's linear interpretation.
+A supporting client **MUST** select the extension image when it can decode and use it. An optional core `texture.source` provides a PNG or JPEG fallback for clients without support. That image follows core color-space rules, including sRGB decoding for color textures.
 
-An SDR fallback cannot generally reproduce HDR values. Authors **SHOULD** provide an acceptable SDR approximation when broad compatibility is desired, and **SHOULD** omit the extension from `extensionsRequired` when that approximation is sufficient.
+When a fallback image is provided, this extension **SHOULD NOT** be listed in `extensionsRequired`, unless preserving HDR values is essential. An SDR fallback cannot generally reproduce HDR values.
 
-### Required HDR image
+### Using Without a Fallback
 
-If any texture using the extension omits a core `source`, the extension **MUST** appear in both `extensionsUsed` and `extensionsRequired`. Authors **MAY** also require it when an SDR approximation is unacceptable. A client unable to decode and use a required image **MUST** report a loading failure rather than silently substitute an SDR image.
+If any texture using the extension omits a core `source`, the extension **MUST** appear in both `extensionsUsed` and `extensionsRequired`. Clients unable to support a required extension **MUST** report a loading failure.
 
 ```json
 {
