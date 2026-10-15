@@ -1,0 +1,17 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "texture.EXT_ultrajpeg.schema.json",
+    "title": "EXT_ultrajpeg texture extension",
+    "type": "object",
+    "description": "An Ultra HDR JPEG image reconstructed as linear HDR texture samples.",
+    "allOf": [{ "$ref": "glTFProperty.schema.json" }],
+    "properties": {
+        "source": {
+            "allOf": [{ "$ref": "glTFid.schema.json" }],
+            "description": "The index of the Ultra HDR JPEG image."
+        },
+        "extensions": {},
+        "extras": {}
+    },
+    "required": ["source"]
+}
