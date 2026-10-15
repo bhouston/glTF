@@ -103,7 +103,7 @@ Decoded color samples are already in linear sRGB. Clients **MUST NOT** apply an 
 
 The consuming material or extension defines channel meanings, units, factors, and allowed ranges. Those rules continue to apply. For example, HDR emissive RGB values are permitted, but this extension does not expand the permitted ranges of base color, metallic, roughness, occlusion, or alpha. Non-color textures use the decoded channel values directly, without color conversion. Binding the same image to different slots does not change its transfer function.
 
-Clients **MUST** retain values above `1.0` through texture decoding and sampling. They **MAY** use a runtime floating-point representation different from the encoded precision, subject to its precision and range limitations. A client unable to represent the image's range without clipping or overflow **MUST** treat the image as unsupported. No bit-exact 32-bit GPU storage is implied by a 32-bit source image.
+Clients **MUST** retain linear HDR values, including values above `1.0`, through texture decoding and sampling. Decoding to IEEE 754 binary16 (16-bit floating-point) samples is **RECOMMENDED** when its precision and range are sufficient for the asset. Clients **MAY** instead use 32-bit floating-point samples or another runtime representation, including a transcoded representation, provided texture sampling recovers the linear HDR values within that representation's precision without clipping or overflow. A client unable to represent the image's range **MUST** treat the image as unsupported. The encoded sample precision does not mandate a decoder output type or GPU storage format.
 
 ## Implementation Considerations (Informative)
 
