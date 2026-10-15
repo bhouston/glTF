@@ -1,0 +1,18 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "texture.KHR_jpegxl_linear.schema.json",
+    "title": "KHR_jpegxl_linear texture extension",
+    "type": "object",
+    "description": "A JPEG XL image containing linear floating-point texture samples.",
+    "allOf": [{ "$ref": "glTFProperty.schema.json" }],
+    "properties": {
+        "source": {
+            "allOf": [{ "$ref": "glTFid.schema.json" }],
+            "description": "The index of the JPEG XL image."
+        },
+        "extensions": {},
+        "extras": {}
+    },
+    "required": ["source"]
+}
+
